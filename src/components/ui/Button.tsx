@@ -4,7 +4,7 @@ import type { ButtonHTMLAttributes } from "react";
 import { forwardRef } from "react";
 import clsx from "clsx";
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "sm" | "md";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,14 +14,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const baseClasses =
-  "inline-flex items-center justify-center rounded-xl text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 hover:scale-[1.02]";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-white hover:bg-primaryDark shadow-sm",
+  primary:
+    "bg-flowdesk-gradient text-white shadow-sm hover:opacity-90 hover:shadow-md",
   secondary:
-    "border border-border bg-white text-textPrimary hover:bg-slate-50 shadow-sm",
+    "border border-primary bg-white text-primary hover:bg-primary/10 shadow-sm",
   ghost:
     "text-textSecondary hover:bg-slate-100 hover:text-textPrimary border border-transparent",
+  danger:
+    "bg-red-500 text-white shadow-sm hover:bg-red-600 hover:shadow-md",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

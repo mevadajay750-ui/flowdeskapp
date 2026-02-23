@@ -61,6 +61,12 @@ export default function CreateProjectPage() {
         .map((item) => item.trim())
         .filter(Boolean);
 
+      const creatorMember = {
+        uid: user.uid,
+        projectRole: "Owner",
+        assignedAt: serverTimestamp(),
+      };
+
       await addDoc(collection(db, "projects"), {
         name: values.name,
         clientName: values.clientName,
@@ -70,7 +76,8 @@ export default function CreateProjectPage() {
         endDate: values.endDate || null,
         status: values.status ?? "active",
         createdBy: user.uid,
-        members: [user.uid],
+        members: [creatorMember],
+        memberIds: [user.uid],
         createdAt: serverTimestamp(),
       });
 

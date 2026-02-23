@@ -7,11 +7,13 @@ import {
   Clock,
   FolderKanban,
   LayoutDashboard,
+  MessageSquare,
   Settings,
   Users,
 } from "lucide-react";
 
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
+import { Logo } from "@/components/ui/Logo";
 
 interface NavItem {
   label: string;
@@ -30,6 +32,11 @@ const navItems: NavItem[] = [
     label: "Projects",
     href: "/projects",
     icon: FolderKanban,
+  },
+  {
+    label: "Chat",
+    href: "/chat",
+    icon: MessageSquare,
   },
   {
     label: "Timesheets",
@@ -61,17 +68,14 @@ export function Sidebar() {
   }, [pathname]);
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-border bg-white/95 px-3 py-4 shadow-sm backdrop-blur md:flex">
-      <div className="mb-6 flex items-center gap-2 px-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-primary/10 text-sm font-semibold text-primary">
-          F
-        </div>
-        <span className="text-sm font-semibold tracking-tight text-textPrimary">
-          Flowdesk
-        </span>
+    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-border bg-slate-50/80 px-3 py-4 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900 md:flex">
+      <div className="mb-4 px-2">
+        <Logo />
       </div>
 
-      <nav className="flex-1 space-y-1">
+      <div className="mb-4 h-px w-full bg-linear-to-r from-transparent via-border to-transparent" />
+
+      <nav className="flex-1 space-y-1.5">
         {navItems.map((item) => {
           const Icon = item.icon;
           const content = (
@@ -79,9 +83,9 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={[
-                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition",
+                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200",
                 activeHref === item.href
-                  ? "bg-primary/10 text-primary"
+                  ? "relative border-l-4 border-l-primary bg-primary/5 font-semibold text-primary"
                   : "text-textSecondary hover:bg-slate-100 hover:text-textPrimary",
               ].join(" ")}
             >

@@ -8,6 +8,7 @@ import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ProjectTabs } from "@/components/projects/ProjectTabs";
 import type { Project, ProjectStatus } from "@/types";
 import { hasPermission } from "@/lib/rbac";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -157,6 +158,8 @@ export default function ProjectDetailsPage() {
           </div>
         )}
       </div>
+
+      <ProjectTabs projectId={projectId} />
 
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">

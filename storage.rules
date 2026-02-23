@@ -1,0 +1,48 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    function isProjectMemberFor(projectId) {
+      let project = get(/databases/(default)/documents/projects/$(projectId)).data;
+
+      // Project membership is determined from the denormalized memberIds array.
+      // All code paths that assign members must keep memberIds in sync.
+      return isAuthenticated() &&
+        project.memberIds != null &&
+        request.auth.uid in project.memberIds;
+    }
+
+    // Project chat attachments
+    match /projects/{projectId}/chat/{messageId} {
+      allow read, write: if isAdmin() || isProjectMemberFor(projectId);
+    }
+
+    // User uploads
+    match /users/{uid}/id-proof {
+      // Users can upload and read their own ID proof
+      allow write: if isAuthenticated() && request.auth.uid == uid;
+      allow read: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+    }
+
+    match /users/{uid}/profile-photo {
+      // Users can upload and read their own profile photo
+      allow write: if isAuthenticated() && request.auth.uid == uid;
+      allow read: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+    }
+
+    // Deny everything else by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
+

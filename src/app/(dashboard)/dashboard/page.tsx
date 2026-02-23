@@ -15,12 +15,20 @@ export default function DashboardPage() {
   if (isAdmin) {
     return (
       <div className="space-y-6">
-        <p className="text-sm text-textSecondary">
-          Welcome back, <span className="font-medium">{user.name}</span>.
-        </p>
+        <Card className="bg-flowdesk-gradient text-white shadow-md">
+          <div className="space-y-2">
+            <p className="text-sm font-medium opacity-90">
+              Welcome back, <span className="font-semibold">{user.name}</span>{" "}
+              👋
+            </p>
+            <p className="text-xs opacity-90">
+              Here&apos;s what&apos;s happening today across your workspace.
+            </p>
+          </div>
+        </Card>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Card>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Card className="bg-white">
             <div className="text-xs font-medium uppercase tracking-wide text-textSecondary">
               Total Members
             </div>
@@ -31,7 +39,7 @@ export default function DashboardPage() {
               Member analytics will appear here as you grow the team.
             </p>
           </Card>
-          <Card>
+          <Card className="bg-white">
             <div className="text-xs font-medium uppercase tracking-wide text-textSecondary">
               Pending Approvals
             </div>
@@ -42,7 +50,7 @@ export default function DashboardPage() {
               Track new signups waiting for review.
             </p>
           </Card>
-          <Card>
+          <Card className="bg-white">
             <div className="text-xs font-medium uppercase tracking-wide text-textSecondary">
               Total Projects
             </div>
@@ -60,12 +68,19 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-textSecondary">
-        Welcome back, <span className="font-medium">{user.name}</span>.
-      </p>
+      <Card className="bg-flowdesk-gradient text-white shadow-md">
+        <div className="space-y-2">
+          <p className="text-sm font-medium opacity-90">
+            Welcome back, <span className="font-semibold">{user.name}</span> 👋
+          </p>
+          <p className="text-xs opacity-90">
+            Here&apos;s what&apos;s happening today.
+          </p>
+        </div>
+      </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="bg-white">
           <div className="mb-3 text-sm font-semibold text-textPrimary">
             Assigned Projects
           </div>
@@ -74,7 +89,7 @@ export default function DashboardPage() {
             assigned, they&apos;ll appear here with key details and next steps.
           </p>
         </Card>
-        <Card>
+        <Card className="bg-white">
           <div className="mb-3 text-sm font-semibold text-textPrimary">
             My Logged Hours
           </div>

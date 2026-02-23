@@ -107,6 +107,20 @@ export default function SignupPage() {
       router.push("/login");
     } catch (err: unknown) {
       console.error(err);
+
+      const errorCode =
+        typeof err === "object" && err !== null && "code" in err
+          ? (err as { code?: string }).code
+          : undefined;
+
+      if (errorCode === "auth/email-already-in-use") {
+        setError(
+          "An account with this email already exists. Redirecting to login..."
+        );
+        router.push("/login");
+        return;
+      }
+
       setError("Unable to create account. Please try again.");
     } finally {
       setSubmitting(false);

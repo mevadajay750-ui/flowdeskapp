@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    function isProjectMemberFor(projectId) {
+      let project = get(/databases/$(database)/documents/projects/$(projectId)).data;
+
+      // Project membership is determined from the denormalized memberIds array.
+      // All code paths that assign members must keep memberIds in sync.
+      return isAuthenticated() &&
+        project.memberIds != null &&
+        request.auth.uid in project.memberIds;
+    }
+
+    function isProjectMember() {
+      return isAuthenticated() &&
+        resource.data.memberIds != null &&
+        request.auth.uid in resource.data.memberIds;
+    }
+
+    match /projects/{projectId} {
+      // Members can read projects they belong to.
+      // Admins can read all projects.
+      allow get, list, read: if isAdmin() || isProjectMember();
+
+      // Only admins can create, update, or delete projects,
+      // including modifications to the members and memberIds fields.
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /projects/{projectId}/messages/{messageId} {
+      // Admins can always access project chats; others must be members
+      allow read: if isAdmin() || isProjectMemberFor(projectId);
+
+      allow create: if isAdmin() || isProjectMemberFor(projectId);
+
+      allow update, delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read: if request.auth != null
+        && (request.auth.uid == userId
+          || request.auth.token.role == "admin");
+
+      allow update: if request.auth.uid == userId
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.status == resource.data.status;
+
+      allow create: if request.auth != null;
+
+      allow delete: if false;
+    }
+
+    match /timesheets/{timesheetId} {
+
+      allow create: if isAuthenticated();
+
+      allow read: if isAuthenticated()
+        && (
+          resource.data.userId == request.auth.uid
+          || isAdmin()
+        );
+
+      allow update: if isAuthenticated()
+        && (
+          (resource.data.userId == request.auth.uid
+            && resource.data.status == "pending")
+          || isAdmin()
+        );
+
+      allow delete: if false;
+    }
+  }
+}
+

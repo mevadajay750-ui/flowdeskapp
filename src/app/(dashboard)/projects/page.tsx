@@ -7,6 +7,8 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { Project, ProjectStatus } from "@/types";
 import { hasPermission } from "@/lib/rbac";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -54,7 +56,7 @@ export default function ProjectsPage() {
           // Limited view: only projects the user is a member of
           const q = query(
             collection(db, "projects"),
-            where("members", "array-contains", user.uid)
+            where("memberIds", "array-contains", user.uid)
           );
           snapshot = await getDocs(q);
         }
@@ -109,11 +111,8 @@ export default function ProjectsPage() {
 
         {canCreate && (
           <PermissionGuard permission="create_project" fallback={null}>
-            <Link
-              href="/projects/create"
-              className="inline-flex items-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-primaryDark"
-            >
-              New Project
+            <Link href="/projects/create">
+              <Button size="sm">New Project</Button>
             </Link>
           </PermissionGuard>
         )}
@@ -126,17 +125,34 @@ export default function ProjectsPage() {
       )}
 
       {fetching ? (
-        <div className="rounded-2xl border border-border bg-white px-4 py-6 text-sm text-textSecondary shadow-sm">
+        <Card className="text-sm text-textSecondary">
           Loading projects...
-        </div>
-      ) : projects.length === 0 ? (
-        <Card className="rounded-2xl text-sm text-textSecondary">
-          <p>
-            {hasPermission(user.role, "view_all_projects")
-              ? "No projects have been created yet. Start by creating the first project."
-              : "You don’t have any assigned projects yet. Once you’re added to a project, it will appear here."}
-          </p>
         </Card>
+      ) : projects.length === 0 ? (
+        <EmptyState
+          title={
+            hasPermission(user.role, "view_all_projects")
+              ? "No projects yet"
+              : "No assigned projects"
+          }
+          description={
+            hasPermission(user.role, "view_all_projects")
+              ? "Start by creating your first project to track work with your team."
+              : "Once an admin assigns you to a project, it will appear here."
+          }
+          actionLabel={
+            hasPermission(user.role, "view_all_projects")
+              ? "Create project"
+              : undefined
+          }
+          onActionClick={
+            hasPermission(user.role, "view_all_projects")
+              ? () => {
+                  window.location.href = "/projects/create";
+                }
+              : undefined
+          }
+        />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {projects.map((project) => (
