@@ -23,7 +23,7 @@ const projectSchema = z.object({
     .min(1, "Please enter at least one technology (comma separated)."),
   startDate: z.string().min(1, "Start date is required."),
   endDate: z.string().optional(),
-  status: z.custom<ProjectStatus>().default("active" as ProjectStatus),
+  status: z.custom<ProjectStatus>(),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;

@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -15,25 +14,25 @@ export async function POST(request: Request) {
     );
   }
 
-  const cookieStore = cookies();
   const isProduction = process.env.NODE_ENV === "production";
+  const response = NextResponse.json({ success: true });
 
   if (status === "approved") {
-    cookieStore.set("fd_token", uid, {
+    response.cookies.set("fd_token", uid, {
       httpOnly: true,
       sameSite: "lax",
       secure: isProduction,
       path: "/",
     });
 
-    cookieStore.set("fd_status", status, {
+    response.cookies.set("fd_status", status, {
       httpOnly: true,
       sameSite: "lax",
       secure: isProduction,
       path: "/",
     });
 
-    cookieStore.set("fd_role", role, {
+    response.cookies.set("fd_role", role, {
       httpOnly: true,
       sameSite: "lax",
       secure: isProduction,
@@ -41,16 +40,25 @@ export async function POST(request: Request) {
     });
   }
 
-  return NextResponse.json({ success: true });
+  return response;
 }
 
 export async function DELETE() {
-  const cookieStore = cookies();
+  const response = NextResponse.json({ success: true });
 
-  cookieStore.delete("fd_token");
-  cookieStore.delete("fd_status");
-  cookieStore.delete("fd_role");
+  response.cookies.set("fd_token", "", {
+    path: "/",
+    maxAge: 0,
+  });
+  response.cookies.set("fd_status", "", {
+    path: "/",
+    maxAge: 0,
+  });
+  response.cookies.set("fd_role", "", {
+    path: "/",
+    maxAge: 0,
+  });
 
-  return NextResponse.json({ success: true });
+  return response;
 }
 

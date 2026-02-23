@@ -24,10 +24,7 @@ const profileSchema = z.object({
     .string()
     .min(7, "Contact number must be at least 7 digits."),
   designation: z.string().min(2, "Designation is required."),
-  skills: z
-    .string()
-    .optional()
-    .transform((val) => val ?? ""),
+  skills: z.string(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
