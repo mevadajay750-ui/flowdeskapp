@@ -10,6 +10,12 @@
   --color-text-primary: #0f172a;
   --color-text-secondary: #64748b;
 
+  --background-image-flowdesk-gradient: linear-gradient(
+    135deg,
+    #2563eb 0%,
+    #14b8a6 100%
+  );
+
   --font-sans: var(--font-inter);
 }
 

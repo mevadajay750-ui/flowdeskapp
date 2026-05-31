@@ -11,7 +11,10 @@ export function Card({ children, className, ...props }: CardProps) {
   return (
     <div
       className={clsx(
-        "rounded-xl border border-border bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md dark:bg-slate-900 dark:border-slate-800",
+        "rounded-xl border border-border p-5 shadow-sm transition-all duration-200 hover:shadow-md dark:border-slate-800",
+        className?.includes("bg-") || className?.includes("from-")
+          ? null
+          : "bg-white dark:bg-slate-900",
         className
       )}
       {...props}

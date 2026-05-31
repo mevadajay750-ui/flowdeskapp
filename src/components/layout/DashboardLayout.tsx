@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 
+import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
 
@@ -19,6 +20,9 @@ function resolveTitle(pathname: string | null): string {
   }
   if (pathname === "/projects" || pathname.startsWith("/projects/")) {
     return "Projects";
+  }
+  if (pathname === "/chat" || pathname.startsWith("/chat/")) {
+    return "Chats";
   }
   if (pathname === "/timesheets" || pathname.startsWith("/timesheets/")) {
     return "Timesheets";
@@ -43,7 +47,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <Sidebar />
       <div className="ml-0 flex min-h-screen flex-1 flex-col md:ml-64">
         <Topbar title={title} />
-        <main className="flex-1 px-4 py-6 md:px-6">{children}</main>
+        <main className="flex-1 px-4 py-6 pb-24 md:px-6 md:pb-6">
+          {children}
+        </main>
+        <MobileTabBar />
       </div>
     </div>
   );

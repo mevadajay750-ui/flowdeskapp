@@ -20,7 +20,7 @@ if (
   !firebaseConfig.appId
 ) {
   throw new Error(
-    "Missing Firebase configuration. Check NEXT_PUBLIC_FIREBASE_* values in .env.local."
+    "Missing Firebase configuration. Check NEXT_PUBLIC_FIREBASE_* in .env.local (or .env), then restart the dev server."
   );
 }
 

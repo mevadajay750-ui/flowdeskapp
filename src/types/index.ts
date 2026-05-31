@@ -38,8 +38,36 @@ export interface Project {
   members: ProjectMember[];
   // Denormalized list of member user IDs to support efficient queries and rules
   memberIds?: string[];
+  chatRoomId?: string;
   createdAt: any;
   updatedAt?: any;
+}
+
+export type ChatRoomType = "project" | "group" | "direct";
+
+export interface ChatRoomParticipant {
+  uid: string;
+  name: string;
+  role?: string;
+  photoURL?: string;
+}
+
+export interface ChatRoom {
+  id: string;
+  type: ChatRoomType;
+  name?: string;
+  projectId?: string;
+  participants: ChatRoomParticipant[];
+  // Denormalized UIDs for Firestore array-contains queries
+  participantIds: string[];
+  createdBy: string;
+  createdAt: any;
+  lastMessage?: {
+    text?: string;
+    senderId: string;
+    createdAt: any;
+    messageType: string;
+  };
 }
 
 export type MessageType = "text" | "image" | "file" | "code";

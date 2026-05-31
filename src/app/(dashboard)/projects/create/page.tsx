@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  serverTimestamp,
+  writeBatch,
+} from "firebase/firestore";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -11,6 +16,10 @@ import { db } from "@/app/firebase";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import {
+  participantIdsFromParticipants,
+  projectMembersToParticipants,
+} from "@/lib/chat";
 import type { ProjectStatus } from "@/types";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -67,7 +76,26 @@ export default function CreateProjectPage() {
         assignedAt: serverTimestamp(),
       };
 
-      await addDoc(collection(db, "projects"), {
+      const projectRef = doc(collection(db, "projects"));
+      const chatRoomRef = doc(collection(db, "chatRooms"));
+
+      const participants = projectMembersToParticipants(
+        [creatorMember],
+        new Map([
+          [
+            user.uid,
+            {
+              name: user.name,
+              email: user.email,
+              photoURL: user.photoURL,
+            },
+          ],
+        ])
+      );
+      const participantIds = participantIdsFromParticipants(participants);
+
+      const batch = writeBatch(db);
+      batch.set(projectRef, {
         name: values.name,
         clientName: values.clientName,
         description: values.description,
@@ -78,8 +106,19 @@ export default function CreateProjectPage() {
         createdBy: user.uid,
         members: [creatorMember],
         memberIds: [user.uid],
+        chatRoomId: chatRoomRef.id,
         createdAt: serverTimestamp(),
       });
+      batch.set(chatRoomRef, {
+        type: "project",
+        projectId: projectRef.id,
+        name: values.name,
+        participants,
+        participantIds,
+        createdBy: user.uid,
+        createdAt: serverTimestamp(),
+      });
+      await batch.commit();
 
       if (typeof window !== "undefined") {
         // eslint-disable-next-line no-alert

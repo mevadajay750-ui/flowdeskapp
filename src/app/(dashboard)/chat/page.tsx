@@ -4,25 +4,23 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   collection,
-  getDocs,
-  limit,
-  orderBy,
+  onSnapshot,
   query,
   where,
 } from "firebase/firestore";
 import { format } from "date-fns";
-import { ChevronRight, MessageSquare } from "lucide-react";
+import { ChevronRight, MessageSquare, Users } from "lucide-react";
 
 import { db } from "@/app/firebase";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
-import type { ChatMessage, Project } from "@/types";
-import { hasPermission } from "@/lib/rbac";
+import type { ChatRoom, ChatRoomType } from "@/types";
 import { useAuthStore } from "@/store/useAuthStore";
 
-interface ChatListItem {
-  projectId: string;
-  projectName: string;
+interface ChatListEntry {
+  chatRoomId: string;
+  name: string;
+  type: ChatRoomType;
   lastMessagePreview: string | null;
   lastMessageCreatedAt: any | null;
 }
@@ -45,133 +43,157 @@ function formatTime(value: any): string {
   return "";
 }
 
+function toTimestamp(value: any): number {
+  if (!value) return 0;
+  try {
+    if (typeof value.toDate === "function") {
+      return value.toDate().getTime();
+    }
+    const date = new Date(value);
+    if (!Number.isNaN(date.getTime())) return date.getTime();
+  } catch {
+    // ignore
+  }
+  return 0;
+}
+
+function sortByLastActivity(items: ChatListEntry[]): ChatListEntry[] {
+  return [...items].sort(
+    (a, b) =>
+      toTimestamp(b.lastMessageCreatedAt) - toTimestamp(a.lastMessageCreatedAt)
+  );
+}
+
+function ChatSection({
+  title,
+  items,
+}: {
+  title: string;
+  items: ChatListEntry[];
+}) {
+  if (items.length === 0) return null;
+
+  return (
+    <div className="space-y-2">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-textSecondary">
+        {title}
+      </h2>
+      <Card className="rounded-2xl bg-slate-50/80 p-0 shadow-sm">
+        <div className="divide-y divide-slate-100">
+          {items.map((item) => {
+            const hasMessages = !!item.lastMessagePreview;
+            return (
+              <Link
+                key={item.chatRoomId}
+                href={`/chat/${item.chatRoomId}`}
+                className="flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-slate-100/80"
+              >
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    {item.type === "direct" ? (
+                      <MessageSquare className="h-4 w-4" />
+                    ) : (
+                      <Users className="h-4 w-4" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-textPrimary">
+                      {item.name}
+                    </div>
+                    <div className="mt-0.5 text-xs text-textSecondary">
+                      <span className="line-clamp-1">
+                        {hasMessages
+                          ? item.lastMessagePreview
+                          : "No messages yet"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pl-2 text-xs text-textSecondary">
+                  {hasMessages && (
+                    <span className="whitespace-nowrap">
+                      {formatTime(item.lastMessageCreatedAt)}
+                    </span>
+                  )}
+                  <ChevronRight className="h-4 w-4 text-slate-400" />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 export default function ChatListPage() {
   const { user, loading } = useAuthStore();
 
-  const [items, setItems] = useState<ChatListItem[]>([]);
+  const [rooms, setRooms] = useState<ChatListEntry[]>([]);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const load = async () => {
-      if (!user) return;
+    if (!user) {
+      setRooms([]);
+      setFetching(false);
+      return;
+    }
 
-      setFetching(true);
-      setError(null);
+    setFetching(true);
+    setError(null);
 
-      try {
-        const canViewAll = hasPermission(user.role, "view_all_projects");
+    const roomsQuery = query(
+      collection(db, "chatRooms"),
+      where("participantIds", "array-contains", user.uid)
+    );
 
-        let projectsSnapshot;
-        if (canViewAll) {
-          projectsSnapshot = await getDocs(collection(db, "projects"));
-        } else {
-          const projectsQuery = query(
-            collection(db, "projects"),
-            where("memberIds", "array-contains", user.uid)
-          );
-          projectsSnapshot = await getDocs(projectsQuery);
-        }
+    const unsubscribe = onSnapshot(
+      roomsQuery,
+      (snapshot) => {
+        const entries: ChatListEntry[] = [];
 
-        const projects: Project[] = [];
-        projectsSnapshot.forEach((docSnap) => {
-          const data = docSnap.data() as Omit<Project, "id">;
-          const project: Project = {
-            id: docSnap.id,
-            ...data,
-          };
-          projects.push(project);
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data() as Omit<ChatRoom, "id">;
+          const last = data.lastMessage;
+
+          entries.push({
+            chatRoomId: docSnap.id,
+            name: data.name ?? "Conversation",
+            type: data.type,
+            lastMessagePreview: last?.text ?? null,
+            lastMessageCreatedAt: last?.createdAt ?? null,
+          });
         });
 
-        const activeProjects = projects.filter(
-          (project) => project.status !== "archived"
-        );
-
-        if (activeProjects.length === 0) {
-          setItems([]);
-          return;
-        }
-
-        const chatItems = await Promise.all(
-          activeProjects.map(async (project): Promise<ChatListItem> => {
-            const messagesRef = collection(
-              db,
-              "projects",
-              project.id,
-              "messages"
-            );
-            const messagesQuery = query(
-              messagesRef,
-              orderBy("createdAt", "desc"),
-              limit(1)
-            );
-
-            const snapshot = await getDocs(messagesQuery);
-
-            if (snapshot.empty) {
-              return {
-                projectId: project.id,
-                projectName: project.name,
-                lastMessagePreview: null,
-                lastMessageCreatedAt: null,
-              };
-            }
-
-            const messageDoc = snapshot.docs[0];
-            const data = messageDoc.data() as Omit<ChatMessage, "id">;
-
-            const preview =
-              (data.content && data.content.trim()) ||
-              data.fileName ||
-              (data.messageType === "image"
-                ? "Image"
-                : data.messageType === "file"
-                ? "File"
-                : "Message");
-
-            return {
-              projectId: project.id,
-              projectName: project.name,
-              lastMessagePreview: preview,
-              lastMessageCreatedAt: data.createdAt ?? null,
-            };
-          })
-        );
-
-        chatItems.sort((a, b) => {
-          const aTime = a.lastMessageCreatedAt
-            ? new Date(
-                typeof a.lastMessageCreatedAt.toDate === "function"
-                  ? a.lastMessageCreatedAt.toDate()
-                  : a.lastMessageCreatedAt
-              ).getTime()
-            : 0;
-          const bTime = b.lastMessageCreatedAt
-            ? new Date(
-                typeof b.lastMessageCreatedAt.toDate === "function"
-                  ? b.lastMessageCreatedAt.toDate()
-                  : b.lastMessageCreatedAt
-              ).getTime()
-            : 0;
-
-          return bTime - aTime;
-        });
-
-        setItems(chatItems);
-      } catch (err) {
+        setRooms(entries);
+        setFetching(false);
+      },
+      (err) => {
         console.error(err);
         setError("Failed to load chats.");
-      } finally {
         setFetching(false);
       }
-    };
+    );
 
-    if (!loading && user) {
-      void load();
-    }
-  }, [loading, user]);
+    return () => unsubscribe();
+  }, [user]);
 
-  const hasProjects = useMemo(() => items.length > 0, [items]);
+  const grouped = useMemo(() => {
+    const direct = sortByLastActivity(
+      rooms.filter((room) => room.type === "direct")
+    );
+    const group = sortByLastActivity(
+      rooms.filter((room) => room.type === "group")
+    );
+    const project = sortByLastActivity(
+      rooms.filter((room) => room.type === "project")
+    );
+
+    return { direct, group, project };
+  }, [rooms]);
+
+  const hasAnyRooms = rooms.length > 0;
 
   if (loading) {
     return (
@@ -183,17 +205,13 @@ export default function ChatListPage() {
     return null;
   }
 
-  const isAdmin = hasPermission(user.role, "view_all_projects");
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-textPrimary">Chat</h1>
-          <p className="mt-1 text-sm text-textSecondary">
-            See conversations across all projects you&apos;re part of.
-          </p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-semibold text-textPrimary">Chats</h1>
+        <p className="mt-1 text-sm text-textSecondary">
+          Direct messages, groups, and project conversations in one place.
+        </p>
       </div>
 
       {error && (
@@ -204,58 +222,18 @@ export default function ChatListPage() {
 
       {fetching ? (
         <Card className="text-sm text-textSecondary">Loading chats...</Card>
-      ) : !hasProjects ? (
+      ) : !hasAnyRooms ? (
         <EmptyState
-          title={isAdmin ? "No project chats yet" : "No project access yet"}
-          description={
-            isAdmin
-              ? "Create a project to start a shared space for your team to collaborate."
-              : "Once you’re added to a project, its chat will appear here."
-          }
+          title="No conversations yet."
+          description="Project chats appear here when you are added to a project. Group chats and direct messages will show up as they are created."
         />
       ) : (
-        <Card className="rounded-2xl bg-slate-50/80 p-0 shadow-sm">
-          <div className="divide-y divide-slate-100">
-            {items.map((item) => {
-              const hasMessages = !!item.lastMessagePreview;
-              return (
-                <Link
-                  key={item.projectId}
-                  href={`/chat/${item.projectId}`}
-                  className="flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-slate-100/80"
-                >
-                  <div className="flex min-w-0 flex-1 items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <MessageSquare className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-textPrimary">
-                        {item.projectName}
-                      </div>
-                      <div className="mt-0.5 flex items-center gap-2 text-xs text-textSecondary">
-                        <span className="line-clamp-1">
-                          {hasMessages
-                            ? item.lastMessagePreview
-                            : "No messages yet"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 pl-2 text-xs text-textSecondary">
-                    {hasMessages && (
-                      <span className="whitespace-nowrap">
-                        {formatTime(item.lastMessageCreatedAt)}
-                      </span>
-                    )}
-                    <ChevronRight className="h-4 w-4 text-slate-400" />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </Card>
+        <div className="space-y-6">
+          <ChatSection title="Direct Messages" items={grouped.direct} />
+          <ChatSection title="Groups" items={grouped.group} />
+          <ChatSection title="Projects" items={grouped.project} />
+        </div>
       )}
     </div>
   );
 }
-

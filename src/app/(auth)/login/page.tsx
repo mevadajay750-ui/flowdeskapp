@@ -10,6 +10,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { auth, db } from "@/app/firebase";
+import {
+  getFirebaseAuthErrorMessage,
+  isFirebaseClientConfigured,
+  normalizeAuthEmail,
+} from "@/lib/firebaseAuthErrors";
 import type { AppUser } from "@/types";
 
 const loginSchema = z.object({
@@ -36,11 +41,22 @@ export default function LoginPage() {
     setError(null);
     setSubmitting(true);
 
+    if (!isFirebaseClientConfigured()) {
+      setError(
+        "Firebase is not configured. Add NEXT_PUBLIC_FIREBASE_* to .env.local, then restart npm run dev."
+      );
+      setSubmitting(false);
+      return;
+    }
+
+    const email = normalizeAuthEmail(values.email);
+    const password = values.password;
+
     try {
       const credential = await signInWithEmailAndPassword(
         auth,
-        values.email,
-        values.password
+        email,
+        password
       );
 
       const uid = credential.user.uid;
@@ -76,7 +92,7 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: unknown) {
       console.error(err);
-      setError("Invalid email or password.");
+      setError(getFirebaseAuthErrorMessage(err));
     } finally {
       setSubmitting(false);
     }

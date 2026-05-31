@@ -28,7 +28,7 @@ export function ProjectTabs({ projectId }: ProjectTabsProps) {
 
   const getHref = (path: string, key: string) => {
     if (key === "chat") {
-      return `/chat/${projectId}`;
+      return `/chat/project/${projectId}`;
     }
     return path === "" ? basePath : `${basePath}${path}`;
   };

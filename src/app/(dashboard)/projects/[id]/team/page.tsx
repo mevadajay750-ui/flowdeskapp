@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "@/app/firebase";
+import { syncProjectChatRoomParticipants } from "@/lib/chat";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { ProjectTabs } from "@/components/projects/ProjectTabs";
 import { Button } from "@/components/ui/Button";
@@ -280,6 +281,9 @@ export default function ProjectTeamPage() {
         current.filter((u) => u.uid !== selectedUserId)
       );
 
+      const updatedMembers = [...(project.members || []), newMember];
+      await syncProjectChatRoomParticipants(projectId, updatedMembers);
+
       setAssignOpen(false);
       setSelectedUserId("");
       setProjectRoleInput("");
@@ -361,6 +365,11 @@ export default function ProjectTeamPage() {
       setMembers((current) =>
         current.filter((row) => row.member.uid !== uid)
       );
+
+      const remainingMembers = (project.members || []).filter(
+        (member) => member.uid !== uid
+      );
+      await syncProjectChatRoomParticipants(projectId, remainingMembers);
     } catch (err) {
       console.error(err);
       setError("Unable to remove member. Please try again.");

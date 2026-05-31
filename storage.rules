@@ -21,9 +21,16 @@ service firebase.storage {
         request.auth.uid in project.memberIds;
     }
 
-    // Project chat attachments
+    // Project chat attachments (legacy)
     match /projects/{projectId}/chat/{messageId} {
       allow read, write: if isAdmin() || isProjectMemberFor(projectId);
+    }
+
+    // Unified chat room attachments
+    match /chatRooms/{chatRoomId}/chat/{messageId} {
+      allow read, write: if isAuthenticated()
+        && get(/databases/(default)/documents/chatRooms/$(chatRoomId)).data.participantIds
+             .hasAny([request.auth.uid]);
     }
 
     // User uploads

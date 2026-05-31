@@ -18,7 +18,7 @@ const baseClasses =
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-flowdesk-gradient text-white shadow-sm hover:opacity-90 hover:shadow-md",
+    "bg-linear-to-br from-primary to-accent text-white shadow-sm hover:opacity-90 hover:shadow-md",
   secondary:
     "border border-primary bg-white text-primary hover:bg-primary/10 shadow-sm",
   ghost:

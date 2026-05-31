@@ -15,13 +15,13 @@ export default function DashboardPage() {
   if (isAdmin) {
     return (
       <div className="space-y-6">
-        <Card className="bg-flowdesk-gradient text-white shadow-md">
+        <Card className="border-0 bg-linear-to-br from-primary to-accent text-white shadow-md">
           <div className="space-y-2">
-            <p className="text-sm font-medium opacity-90">
+            <p className="text-base font-medium text-white">
               Welcome back, <span className="font-semibold">{user.name}</span>{" "}
               👋
             </p>
-            <p className="text-xs opacity-90">
+            <p className="text-sm text-white/90">
               Here&apos;s what&apos;s happening today across your workspace.
             </p>
           </div>
@@ -68,12 +68,12 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-flowdesk-gradient text-white shadow-md">
+      <Card className="border-0 bg-linear-to-br from-primary to-accent text-white shadow-md">
         <div className="space-y-2">
-          <p className="text-sm font-medium opacity-90">
+          <p className="text-base font-medium text-white">
             Welcome back, <span className="font-semibold">{user.name}</span> 👋
           </p>
-          <p className="text-xs opacity-90">
+          <p className="text-sm text-white/90">
             Here&apos;s what&apos;s happening today.
           </p>
         </div>
