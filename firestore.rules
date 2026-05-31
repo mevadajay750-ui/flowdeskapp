@@ -37,6 +37,34 @@ service cloud.firestore {
       return isChatRoomParticipantData(resource.data);
     }
 
+    function isGroupAdmin() {
+      return resource.data.type == 'group'
+        && resource.data.admins != null
+        && request.auth.uid in resource.data.admins;
+    }
+
+    function isLastMessageOnlyUpdate() {
+      return request.resource.data.diff(resource.data)
+        .affectedKeys().hasOnly(['lastMessage']);
+    }
+
+    function isGroupMetadataUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['name', 'description', 'avatarUrl', 'participants', 'participantIds', 'admins']);
+    }
+
+    function isDirectRoom() {
+      return resource.data.type == 'direct';
+    }
+
+    function isValidDirectCreate() {
+      return request.resource.data.type == 'direct'
+        && request.resource.data.participantIds.size() == 2
+        && request.resource.data.participants.size() == 2
+        && request.resource.data.directKey is string
+        && request.resource.data.directKey.size() > 0;
+    }
+
     match /projects/{projectId} {
       // Members can read projects they belong to.
       // Admins can read all projects.
@@ -63,9 +91,27 @@ service cloud.firestore {
 
       allow create: if request.auth != null
         && request.resource.data.participantIds != null
-        && request.auth.uid in request.resource.data.participantIds;
+        && request.auth.uid in request.resource.data.participantIds
+        && (request.resource.data.type != 'direct' || isValidDirectCreate())
+        && (
+          request.resource.data.type != 'group'
+          || (
+            request.resource.data.type == 'group'
+            && request.resource.data.admins != null
+            && request.auth.uid in request.resource.data.admins
+          )
+        );
 
-      allow update: if isChatRoomMember();
+      // Direct rooms: participants are immutable after creation; only lastMessage may change.
+      allow update: if isChatRoomMember() && (
+        isLastMessageOnlyUpdate()
+        || resource.data.type == 'project'
+        || (
+          resource.data.type == 'group'
+          && isGroupAdmin()
+          && isGroupMetadataUpdate()
+        )
+      ) && !(isDirectRoom() && !isLastMessageOnlyUpdate());
 
       allow delete: if false;
 

@@ -24,6 +24,7 @@ import {
   Download,
   FileText,
   Image as ImageIcon,
+  Info,
   Paperclip,
 } from "lucide-react";
 
@@ -32,6 +33,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
   chatRoomSubtitle,
+  directPeerDisplay,
+  groupInitials,
   isChatRoomParticipant,
   updateChatRoomLastMessage,
 } from "@/lib/chat";
@@ -41,6 +44,10 @@ import { useAuthStore } from "@/store/useAuthStore";
 interface ChatRoomProps {
   chatRoomId: string;
   type?: ChatRoomType;
+  chatRoom?: ChatRoom;
+  onOpenSettings?: () => void;
+  peerDesignation?: string;
+  hideHeader?: boolean;
 }
 
 function formatMessageTime(value: any): string {
@@ -73,7 +80,14 @@ function formatFileSize(bytes?: number): string {
   return `${size.toFixed(size >= 10 ? 0 : 1)} ${units[index]}`;
 }
 
-export function ChatRoom({ chatRoomId, type: typeProp }: ChatRoomProps) {
+export function ChatRoom({
+  chatRoomId,
+  type: typeProp,
+  chatRoom: chatRoomProp,
+  onOpenSettings,
+  peerDesignation,
+  hideHeader = false,
+}: ChatRoomProps) {
   const { user, loading: authLoading } = useAuthStore();
 
   const [chatRoom, setChatRoom] = useState<ChatRoom | null>(null);
@@ -96,8 +110,23 @@ export function ChatRoom({ chatRoomId, type: typeProp }: ChatRoomProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const oldestMessageDocRef = useRef<any | null>(null);
 
-  const roomType = typeProp ?? chatRoom?.type ?? "project";
-  const roomTitle = chatRoom?.name ?? "Chat";
+  const roomType = typeProp ?? chatRoomProp?.type ?? chatRoom?.type ?? "project";
+  const activeRoom = chatRoomProp ?? chatRoom;
+
+  const directPeer = useMemo(() => {
+    if (roomType !== "direct" || !activeRoom || !user) return null;
+    return directPeerDisplay(activeRoom, user.uid);
+  }, [roomType, activeRoom, user]);
+
+  const roomTitle =
+    roomType === "direct" && directPeer
+      ? directPeer.name
+      : activeRoom?.name ?? "Chat";
+
+  const roomSubtitleText =
+    roomType === "direct" && (peerDesignation ?? directPeer?.designation)
+      ? (peerDesignation ?? directPeer?.designation)!
+      : chatRoomSubtitle(roomType);
 
   const canSend = useMemo(
     () =>
@@ -137,6 +166,23 @@ export function ChatRoom({ chatRoomId, type: typeProp }: ChatRoomProps) {
   );
 
   useEffect(() => {
+    if (chatRoomProp) {
+      if (!user) {
+        setAccessDenied(true);
+        setLoadingRoom(false);
+        return;
+      }
+      if (!isChatRoomParticipant(chatRoomProp, user.uid)) {
+        setAccessDenied(true);
+        setChatRoom(chatRoomProp);
+      } else {
+        setChatRoom(chatRoomProp);
+        setAccessDenied(false);
+      }
+      setLoadingRoom(false);
+      return;
+    }
+
     const loadRoom = async () => {
       if (!chatRoomId || authLoading) return;
 
@@ -188,7 +234,7 @@ export function ChatRoom({ chatRoomId, type: typeProp }: ChatRoomProps) {
     };
 
     void loadRoom();
-  }, [chatRoomId, authLoading, user]);
+  }, [chatRoomId, authLoading, user, chatRoomProp]);
 
   useEffect(() => {
     if (!chatRoomId || !user || accessDenied) {
@@ -567,17 +613,55 @@ export function ChatRoom({ chatRoomId, type: typeProp }: ChatRoomProps) {
         </div>
       )}
 
-      <Card className="flex h-[560px] flex-col rounded-2xl shadow-sm">
+      <Card className="flex h-[calc(100dvh-14rem)] min-h-[320px] flex-col rounded-2xl shadow-sm md:h-[560px]">
+        {!hideHeader && (
         <div className="flex items-center justify-between border-b border-border bg-white/80 px-4 py-3">
-          <div>
-            <div className="text-sm font-medium text-textPrimary">
-              {roomTitle}
-            </div>
-            <div className="text-xs text-textSecondary">
-              {chatRoomSubtitle(roomType)}
+          <div className="flex min-w-0 items-center gap-3">
+            {roomType === "group" &&
+              (activeRoom?.avatarUrl ? (
+                <img
+                  src={activeRoom.avatarUrl}
+                  alt=""
+                  className="h-9 w-9 shrink-0 rounded-full border border-slate-200 object-cover"
+                />
+              ) : (
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                  {groupInitials(roomTitle)}
+                </div>
+              ))}
+            {roomType === "direct" &&
+              (directPeer?.photoURL ? (
+                <img
+                  src={directPeer.photoURL}
+                  alt=""
+                  className="h-9 w-9 shrink-0 rounded-full border border-slate-200 object-cover"
+                />
+              ) : (
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                  {groupInitials(roomTitle)}
+                </div>
+              ))}
+            <div className="min-w-0">
+              <div className="truncate text-sm font-medium text-textPrimary">
+                {roomTitle}
+              </div>
+              <div className="text-xs text-textSecondary">
+                {roomSubtitleText}
+              </div>
             </div>
           </div>
+          {roomType === "group" && onOpenSettings && (
+            <button
+              type="button"
+              onClick={onOpenSettings}
+              className="rounded-full border border-border p-2 text-textSecondary transition hover:bg-slate-50 hover:text-textPrimary"
+              aria-label="Group settings"
+            >
+              <Info className="h-4 w-4" />
+            </button>
+          )}
         </div>
+        )}
 
         <div className="flex-1 overflow-y-auto bg-slate-50/80 px-4 py-4">
           {loadingMessages ? (
@@ -714,79 +798,74 @@ export function ChatRoom({ chatRoomId, type: typeProp }: ChatRoomProps) {
           <div ref={scrollAnchorRef} />
         </div>
 
-        <div className="border-t border-border bg-white px-4 py-3">
+        <div className="shrink-0 border-t border-border bg-white px-3 py-2.5 md:px-4 md:py-3">
           <form
-            className="flex items-end gap-2"
+            className="flex flex-col gap-2"
             onSubmit={(event) => {
               event.preventDefault();
               void handleSend();
             }}
           >
-            <div className="flex-1 space-y-2">
-              <textarea
-                rows={1}
-                value={inputValue}
-                disabled={sending || uploading || accessDenied}
-                onChange={(event) => setInputValue(event.target.value)}
-                onKeyDown={(event) => {
-                  if (
-                    event.key === "Enter" &&
-                    !event.shiftKey &&
-                    !sending &&
-                    !uploading
-                  ) {
-                    event.preventDefault();
-                    void handleSend();
-                  }
-                }}
-                placeholder="Type a message... Press Enter to send, Shift+Enter for a new line."
-                className="max-h-32 w-full resize-none rounded-xl border border-border bg-slate-50 px-3 py-2 text-sm text-textPrimary outline-none focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-70"
-              />
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => imageInputRef.current?.click()}
-                    disabled={sending || uploading || accessDenied}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                    <span className="sr-only">Upload image</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={sending || uploading || accessDenied}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <Paperclip className="h-4 w-4" />
-                    <span className="sr-only">Upload file</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCodeModalOpen(true)}
-                    disabled={sending || uploading || accessDenied}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <Code2 className="h-4 w-4" />
-                    <span className="sr-only">Send code snippet</span>
-                  </button>
-                </div>
+            <textarea
+              rows={2}
+              value={inputValue}
+              disabled={sending || uploading || accessDenied}
+              onChange={(event) => setInputValue(event.target.value)}
+              onKeyDown={(event) => {
+                if (
+                  event.key === "Enter" &&
+                  !event.shiftKey &&
+                  !sending &&
+                  !uploading
+                ) {
+                  event.preventDefault();
+                  void handleSend();
+                }
+              }}
+              placeholder="Type a message..."
+              className="min-h-[44px] max-h-32 w-full resize-none rounded-xl border border-border bg-slate-50 px-3 py-2 text-sm text-textPrimary outline-none focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-70"
+            />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => imageInputRef.current?.click()}
+                  disabled={sending || uploading || accessDenied}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <ImageIcon className="h-4 w-4" />
+                  <span className="sr-only">Upload image</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={sending || uploading || accessDenied}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Paperclip className="h-4 w-4" />
+                  <span className="sr-only">Upload file</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCodeModalOpen(true)}
+                  disabled={sending || uploading || accessDenied}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Code2 className="h-4 w-4" />
+                  <span className="sr-only">Send code snippet</span>
+                </button>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
                 {uploading && (
                   <div className="text-[11px] text-textSecondary">
                     Uploading...
                   </div>
                 )}
+                <Button type="submit" size="sm" disabled={!canSend}>
+                  {sending ? "Sending..." : "Send"}
+                </Button>
               </div>
             </div>
-            <Button
-              type="submit"
-              size="sm"
-              disabled={!canSend}
-              className="shrink-0"
-            >
-              {sending ? "Sending..." : "Send"}
-            </Button>
           </form>
           <input
             ref={imageInputRef}

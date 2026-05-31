@@ -50,16 +50,21 @@ export interface ChatRoomParticipant {
   name: string;
   role?: string;
   photoURL?: string;
+  designation?: string;
 }
 
 export interface ChatRoom {
   id: string;
   type: ChatRoomType;
   name?: string;
+  description?: string;
+  avatarUrl?: string;
   projectId?: string;
   participants: ChatRoomParticipant[];
   // Denormalized UIDs for Firestore array-contains queries
   participantIds: string[];
+  admins?: string[];
+  directKey?: string;
   createdBy: string;
   createdAt: any;
   lastMessage?: {

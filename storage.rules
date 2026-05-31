@@ -21,6 +21,22 @@ service firebase.storage {
         request.auth.uid in project.memberIds;
     }
 
+    function isChatRoomParticipantFor(chatRoomId) {
+      let room = get(/databases/(default)/documents/chatRooms/$(chatRoomId)).data;
+
+      return isAuthenticated() &&
+        room.participantIds != null &&
+        request.auth.uid in room.participantIds;
+    }
+
+    function isGroupAdminFor(chatRoomId) {
+      let room = get(/databases/(default)/documents/chatRooms/$(chatRoomId)).data;
+
+      return isAuthenticated() &&
+        room.admins != null &&
+        request.auth.uid in room.admins;
+    }
+
     // Project chat attachments (legacy)
     match /projects/{projectId}/chat/{messageId} {
       allow read, write: if isAdmin() || isProjectMemberFor(projectId);
@@ -28,9 +44,7 @@ service firebase.storage {
 
     // Unified chat room attachments
     match /chatRooms/{chatRoomId}/chat/{messageId} {
-      allow read, write: if isAuthenticated()
-        && get(/databases/(default)/documents/chatRooms/$(chatRoomId)).data.participantIds
-             .hasAny([request.auth.uid]);
+      allow read, write: if isAdmin() || isChatRoomParticipantFor(chatRoomId);
     }
 
     // User uploads
@@ -44,6 +58,11 @@ service firebase.storage {
       // Users can upload and read their own profile photo
       allow write: if isAuthenticated() && request.auth.uid == uid;
       allow read: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+    }
+
+    match /chat-groups/{chatRoomId}/avatar {
+      allow write: if isAdmin() || isGroupAdminFor(chatRoomId);
+      allow read: if isAdmin() || isChatRoomParticipantFor(chatRoomId);
     }
 
     // Deny everything else by default
