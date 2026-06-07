@@ -14,6 +14,7 @@ const tabs = [
   { key: "overview", label: "Overview", path: "" },
   { key: "team", label: "Team", path: "/team" },
   { key: "chat", label: "Chat", path: "/chat" },
+  { key: "files", label: "Files", path: "/files" },
   { key: "timesheets", label: "Timesheets", path: "/timesheets" },
 ];
 

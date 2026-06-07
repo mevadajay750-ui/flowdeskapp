@@ -106,4 +106,28 @@ export interface Timesheet {
   updatedAt?: any;
 }
 
+export type ProjectFileItemType = "folder" | "page" | "file";
+
+export interface ProjectFileItem {
+  id: string;
+  projectId: string;
+  type: ProjectFileItemType;
+  name: string;
+  parentId: string | null;
+  sortOrder: number;
+  createdBy: string;
+  createdByName: string;
+  createdAt: any;
+  updatedAt?: any;
+  content?: string;
+  storagePath?: string;
+  downloadUrl?: string;
+  mimeType?: string;
+  fileSize?: number;
+  fileName?: string;
+}
+
+export interface ProjectFileTreeNode extends ProjectFileItem {
+  children: ProjectFileTreeNode[];
+}
 

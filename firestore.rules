@@ -77,6 +77,11 @@ service cloud.firestore {
         isProjectMemberFor(projectId) &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['chatRoomId'])
       );
+
+      match /fileItems/{itemId} {
+        allow read: if isAdmin() || isProjectMemberFor(projectId);
+        allow create, update, delete: if isAdmin() || isProjectMemberFor(projectId);
+      }
     }
 
     match /projects/{projectId}/messages/{messageId} {
