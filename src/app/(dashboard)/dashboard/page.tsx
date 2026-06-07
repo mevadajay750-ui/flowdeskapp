@@ -28,7 +28,7 @@ export default function DashboardPage() {
         </Card>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Card className="bg-white">
+          <Card className="bg-surface">
             <div className="text-xs font-medium uppercase tracking-wide text-textSecondary">
               Total Members
             </div>
@@ -39,7 +39,7 @@ export default function DashboardPage() {
               Member analytics will appear here as you grow the team.
             </p>
           </Card>
-          <Card className="bg-white">
+          <Card className="bg-surface">
             <div className="text-xs font-medium uppercase tracking-wide text-textSecondary">
               Pending Approvals
             </div>
@@ -50,7 +50,7 @@ export default function DashboardPage() {
               Track new signups waiting for review.
             </p>
           </Card>
-          <Card className="bg-white">
+          <Card className="bg-surface">
             <div className="text-xs font-medium uppercase tracking-wide text-textSecondary">
               Total Projects
             </div>
@@ -80,7 +80,7 @@ export default function DashboardPage() {
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="bg-white">
+        <Card className="bg-surface">
           <div className="mb-3 text-sm font-semibold text-textPrimary">
             Assigned Projects
           </div>
@@ -89,7 +89,7 @@ export default function DashboardPage() {
             assigned, they&apos;ll appear here with key details and next steps.
           </p>
         </Card>
-        <Card className="bg-white">
+        <Card className="bg-surface">
           <div className="mb-3 text-sm font-semibold text-textPrimary">
             My Logged Hours
           </div>

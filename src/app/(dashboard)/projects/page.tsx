@@ -23,7 +23,7 @@ function getStatusStyles(status: ProjectStatus) {
       return "border-amber-200 bg-amber-50 text-amber-700";
     case "archived":
     default:
-      return "border-slate-200 bg-slate-50 text-slate-600";
+      return "border-border bg-surface-secondary text-textSecondary";
   }
 }
 
@@ -119,7 +119,7 @@ export default function ProjectsPage() {
       </div>
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
           {error}
         </div>
       )}
@@ -184,13 +184,13 @@ export default function ProjectsPage() {
                   {project.techStack?.slice(0, 4).map((tech) => (
                     <span
                       key={tech}
-                      className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-textSecondary"
+                      className="inline-flex items-center rounded-full bg-surface-secondary px-2 py-0.5 text-[11px] font-medium text-textSecondary"
                     >
                       {tech}
                     </span>
                   ))}
                   {project.techStack && project.techStack.length > 4 && (
-                    <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-textSecondary">
+                    <span className="inline-flex items-center rounded-full bg-surface-secondary px-2 py-0.5 text-[11px] font-medium text-textSecondary">
                       +{project.techStack.length - 4} more
                     </span>
                   )}

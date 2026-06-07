@@ -106,14 +106,14 @@ export default function MembersPage() {
       </p>
 
       {error && (
-        <div className="mt-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="mt-4 rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
           {error}
         </div>
       )}
 
-      <div className="mt-6 overflow-hidden rounded-xl border border-border bg-white">
+      <div className="mt-6 overflow-hidden rounded-xl border border-border bg-surface">
         <table className="min-w-full divide-y divide-border text-sm">
-          <thead className="bg-slate-50">
+          <thead className="bg-surface-secondary">
             <tr>
               <th className="px-4 py-2 text-left font-medium text-textSecondary">
                 Name
@@ -216,7 +216,7 @@ export default function MembersPage() {
                           actionLoading === member.uid + "-reject"
                         }
                         onClick={() => handleDecision(member.uid, "reject")}
-                        className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-70"
+                        className="rounded-md border border-error/30 px-3 py-1.5 text-xs font-medium text-error hover:bg-error/10 disabled:cursor-not-allowed disabled:opacity-70"
                       >
                         Reject
                       </button>

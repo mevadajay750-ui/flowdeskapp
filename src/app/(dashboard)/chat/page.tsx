@@ -71,7 +71,7 @@ function DmsSection({ items }: { items: DmListItem[] }) {
           View all messages
         </Link>
       </div>
-      <Card className="rounded-2xl bg-slate-50/80 p-0 shadow-sm">
+      <Card className="rounded-2xl bg-surface-secondary/80 p-0 shadow-sm">
         <div className="divide-y divide-slate-100">
           {items.map((item) => (
             <DmListRow key={item.chatRoomId} item={item} />
@@ -98,7 +98,7 @@ function GroupsSection({ items }: { items: GroupListItem[] }) {
           View all groups
         </Link>
       </div>
-      <Card className="rounded-2xl bg-slate-50/80 p-0 shadow-sm">
+      <Card className="rounded-2xl bg-surface-secondary/80 p-0 shadow-sm">
         <div className="divide-y divide-slate-100">
           {items.map((item) => (
             <GroupListRow key={item.chatRoomId} item={item} />
@@ -123,7 +123,7 @@ function ChatSection({
       <h2 className="text-xs font-semibold uppercase tracking-wide text-textSecondary">
         {title}
       </h2>
-      <Card className="rounded-2xl bg-slate-50/80 p-0 shadow-sm">
+      <Card className="rounded-2xl bg-surface-secondary/80 p-0 shadow-sm">
         <div className="divide-y divide-slate-100">
           {items.map((item) => {
             const hasMessages = !!item.lastMessagePreview;
@@ -131,7 +131,7 @@ function ChatSection({
               <Link
                 key={item.chatRoomId}
                 href={`/chat/${item.chatRoomId}`}
-                className="flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-slate-100/80"
+                className="flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-surface-secondary/80"
               >
                 <div className="min-w-0">
                   <div className="truncate text-sm font-semibold text-textPrimary">
@@ -284,7 +284,7 @@ export default function ChatListPage() {
       </div>
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
           {error}
         </div>
       )}

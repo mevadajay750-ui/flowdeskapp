@@ -14,17 +14,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const baseClasses =
-  "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 hover:scale-[1.02]";
+  "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60 hover:scale-[1.02] motion-reduce:hover:scale-100 motion-reduce:transition-none";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
     "bg-linear-to-br from-primary to-accent text-white shadow-sm hover:opacity-90 hover:shadow-md",
   secondary:
-    "border border-primary bg-white text-primary hover:bg-primary/10 shadow-sm",
+    "border border-primary bg-surface text-primary hover:bg-surface-secondary shadow-sm",
   ghost:
-    "text-textSecondary hover:bg-slate-100 hover:text-textPrimary border border-transparent",
+    "text-textSecondary hover:bg-surface-secondary hover:text-textPrimary border border-transparent",
   danger:
-    "bg-red-500 text-white shadow-sm hover:bg-red-600 hover:shadow-md",
+    "bg-error text-white shadow-sm hover:bg-error/90 hover:shadow-md",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -62,4 +62,3 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = "Button";
-

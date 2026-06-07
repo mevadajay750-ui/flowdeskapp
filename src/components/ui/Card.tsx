@@ -8,13 +8,14 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function Card({ children, className, ...props }: CardProps) {
+  const hasCustomBg =
+    className?.includes("bg-") || className?.includes("from-");
+
   return (
     <div
       className={clsx(
-        "rounded-xl border border-border p-5 shadow-sm transition-all duration-200 hover:shadow-md dark:border-slate-800",
-        className?.includes("bg-") || className?.includes("from-")
-          ? null
-          : "bg-white dark:bg-slate-900",
+        "rounded-xl border border-border p-5 shadow-sm transition-all duration-200 hover:shadow-md motion-reduce:transition-none",
+        !hasCustomBg && "bg-surface",
         className
       )}
       {...props}
@@ -23,4 +24,3 @@ export function Card({ children, className, ...props }: CardProps) {
     </div>
   );
 }
-
