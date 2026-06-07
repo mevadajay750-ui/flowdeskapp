@@ -2,71 +2,94 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
 
-    function isAuthenticated() {
+    function isSignedIn() {
       return request.auth != null;
     }
 
+    function userDoc(uid) {
+      return firestore.get(/databases/(default)/documents/users/$(uid)).data;
+    }
+
     function isAdmin() {
-      return isAuthenticated() &&
-        get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == "admin";
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        && userDoc(request.auth.uid).role == "admin";
+    }
+
+    function isApprovedUser() {
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        && userDoc(request.auth.uid).status == "approved";
+    }
+
+    function projectData(projectId) {
+      return firestore.get(/databases/(default)/documents/projects/$(projectId)).data;
     }
 
     function isProjectMemberFor(projectId) {
-      let project = get(/databases/(default)/documents/projects/$(projectId)).data;
+      let projectPath = /databases/(default)/documents/projects/$(projectId);
+      let project = projectData(projectId);
 
       // Project membership is determined from the denormalized memberIds array.
-      // All code paths that assign members must keep memberIds in sync.
-      return isAuthenticated() &&
-        project.memberIds != null &&
-        request.auth.uid in project.memberIds;
+      // createdBy is a fallback for legacy projects missing memberIds.
+      return isSignedIn()
+        && firestore.exists(projectPath)
+        && (
+          (project.memberIds != null && request.auth.uid in project.memberIds)
+          || project.createdBy == request.auth.uid
+        );
+    }
+
+    function canAccessProjectFiles(projectId) {
+      return isApprovedUser() && (isAdmin() || isProjectMemberFor(projectId));
     }
 
     function isChatRoomParticipantFor(chatRoomId) {
-      let room = get(/databases/(default)/documents/chatRooms/$(chatRoomId)).data;
+      let roomPath = /databases/(default)/documents/chatRooms/$(chatRoomId);
 
-      return isAuthenticated() &&
-        room.participantIds != null &&
-        request.auth.uid in room.participantIds;
+      return isSignedIn()
+        && firestore.exists(roomPath)
+        && firestore.get(roomPath).data.participantIds != null
+        && request.auth.uid in firestore.get(roomPath).data.participantIds;
     }
 
     function isGroupAdminFor(chatRoomId) {
-      let room = get(/databases/(default)/documents/chatRooms/$(chatRoomId)).data;
+      let roomPath = /databases/(default)/documents/chatRooms/$(chatRoomId);
 
-      return isAuthenticated() &&
-        room.admins != null &&
-        request.auth.uid in room.admins;
+      return isSignedIn()
+        && firestore.exists(roomPath)
+        && firestore.get(roomPath).data.admins != null
+        && request.auth.uid in firestore.get(roomPath).data.admins;
     }
 
     // Project chat attachments (legacy)
     match /projects/{projectId}/chat/{messageId} {
-      allow read, write: if isAdmin() || isProjectMemberFor(projectId);
+      allow read, write: if canAccessProjectFiles(projectId);
     }
 
     // Unified chat room attachments
     match /chatRooms/{chatRoomId}/chat/{messageId} {
-      allow read, write: if isAdmin() || isChatRoomParticipantFor(chatRoomId);
+      allow read, write: if isApprovedUser() && (isAdmin() || isChatRoomParticipantFor(chatRoomId));
     }
 
     // User uploads
     match /users/{uid}/id-proof {
-      // Users can upload and read their own ID proof
-      allow write: if isAuthenticated() && request.auth.uid == uid;
-      allow read: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      allow write: if isSignedIn() && request.auth.uid == uid;
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin());
     }
 
     match /users/{uid}/profile-photo {
-      // Users can upload and read their own profile photo
-      allow write: if isAuthenticated() && request.auth.uid == uid;
-      allow read: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      allow write: if isSignedIn() && request.auth.uid == uid;
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin());
     }
 
     match /chat-groups/{chatRoomId}/avatar {
-      allow write: if isAdmin() || isGroupAdminFor(chatRoomId);
-      allow read: if isAdmin() || isChatRoomParticipantFor(chatRoomId);
+      allow write: if isApprovedUser() && (isAdmin() || isGroupAdminFor(chatRoomId));
+      allow read: if isApprovedUser() && (isAdmin() || isChatRoomParticipantFor(chatRoomId));
     }
 
     match /projects/{projectId}/files/{itemId}/{fileName} {
-      allow read, write: if isAdmin() || isProjectMemberFor(projectId);
+      allow read, write: if canAccessProjectFiles(projectId);
     }
 
     // Deny everything else by default
@@ -75,4 +98,3 @@ service firebase.storage {
     }
   }
 }
-
