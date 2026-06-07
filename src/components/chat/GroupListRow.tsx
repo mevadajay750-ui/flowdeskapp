@@ -49,14 +49,14 @@ export function GroupListRow({ item }: GroupListRowProps) {
   return (
     <Link
       href={`/chat/groups/${item.chatRoomId}`}
-      className="flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-slate-100/80"
+      className="flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-surface-secondary/80"
     >
       <div className="flex min-w-0 flex-1 items-center gap-3">
         {item.avatarUrl ? (
           <img
             src={item.avatarUrl}
             alt=""
-            className="h-11 w-11 shrink-0 rounded-full border border-slate-200 object-cover"
+            className="h-11 w-11 shrink-0 rounded-full border border-border object-cover"
           />
         ) : (
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
@@ -74,7 +74,7 @@ export function GroupListRow({ item }: GroupListRowProps) {
           )}
           <div className="mt-0.5 flex items-center gap-2 text-xs text-textSecondary">
             <span>{item.memberCount} members</span>
-            <span className="text-slate-300">·</span>
+            <span className="text-textSecondary">·</span>
             <span className="line-clamp-1">
               {hasMessages ? item.lastMessagePreview : "No messages yet"}
             </span>
@@ -87,7 +87,7 @@ export function GroupListRow({ item }: GroupListRowProps) {
             {formatTime(item.lastMessageCreatedAt)}
           </span>
         )}
-        <ChevronRight className="h-4 w-4 text-slate-400" />
+        <ChevronRight className="h-4 w-4 text-textSecondary" />
       </div>
     </Link>
   );

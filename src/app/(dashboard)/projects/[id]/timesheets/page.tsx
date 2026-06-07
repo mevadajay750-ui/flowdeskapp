@@ -24,7 +24,7 @@ function getStatusStyles(status: TimesheetStatus) {
     case "approved":
       return "border-emerald-200 bg-emerald-50 text-emerald-700";
     case "rejected":
-      return "border-red-200 bg-red-50 text-red-700";
+      return "border-error/30 bg-error/10 text-error";
     case "pending":
     default:
       return "border-amber-200 bg-amber-50 text-amber-700";
@@ -247,7 +247,7 @@ export default function ProjectTimesheetsPage() {
       <ProjectTabs projectId={projectId} />
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
           {error}
         </div>
       )}
@@ -260,7 +260,7 @@ export default function ProjectTimesheetsPage() {
                 Status
               </label>
               <select
-                className="min-w-[140px] rounded-xl border border-border bg-white px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="min-w-[140px] rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                 value={statusFilter}
                 onChange={(e) =>
                   setStatusFilter(e.target.value as TimesheetStatus | "all")
@@ -278,7 +278,7 @@ export default function ProjectTimesheetsPage() {
                 User
               </label>
               <select
-                className="min-w-[180px] rounded-xl border border-border bg-white px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="min-w-[180px] rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                 value={userFilter}
                 onChange={(e) => setUserFilter(e.target.value)}
               >
@@ -295,7 +295,7 @@ export default function ProjectTimesheetsPage() {
       )}
 
       {fetching ? (
-        <div className="rounded-2xl border border-border bg-white px-4 py-6 text-sm text-textSecondary shadow-sm">
+        <div className="rounded-2xl border border-border bg-surface px-4 py-6 text-sm text-textSecondary shadow-sm">
           Loading timesheets...
         </div>
       ) : filteredTimesheets.length === 0 ? (
@@ -310,7 +310,7 @@ export default function ProjectTimesheetsPage() {
         <Card className="rounded-2xl shadow-sm">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-border text-sm">
-              <thead className="bg-slate-50">
+              <thead className="bg-surface-secondary">
                 <tr>
                   {isAdmin && (
                     <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-textSecondary">
@@ -331,7 +331,7 @@ export default function ProjectTimesheetsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border bg-white">
+              <tbody className="divide-y divide-border bg-surface">
                 {filteredTimesheets.map((t) => (
                   <tr key={t.id} className="align-top">
                     {isAdmin && (
@@ -359,7 +359,7 @@ export default function ProjectTimesheetsPage() {
                           {formatStatusLabel(t.status)}
                         </span>
                         {t.status === "rejected" && t.rejectionComment && (
-                          <p className="max-w-xs text-[11px] text-red-700">
+                          <p className="max-w-xs text-[11px] text-error">
                             {t.rejectionComment}
                           </p>
                         )}
@@ -413,7 +413,7 @@ export default function ProjectTimesheetsPage() {
 
       {isAdmin && rejectingId && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/30 px-4">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-white p-5 shadow-lg">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-5 shadow-lg">
             <h2 className="text-sm font-semibold text-textPrimary">
               Reject timesheet
             </h2>
@@ -428,12 +428,12 @@ export default function ProjectTimesheetsPage() {
               </label>
               <textarea
                 rows={4}
-                className="w-full rounded-xl border border-border px-3 py-2 text-sm outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                className="w-full rounded-xl border border-border px-3 py-2 text-sm outline-none focus:border-error focus:ring-1 focus:ring-error"
                 value={rejectionComment}
                 onChange={(e) => setRejectionComment(e.target.value)}
               />
               {rejectError && (
-                <p className="text-xs text-red-600">{rejectError}</p>
+                <p className="text-xs text-error">{rejectError}</p>
               )}
             </div>
 
@@ -449,7 +449,7 @@ export default function ProjectTimesheetsPage() {
               <Button
                 size="sm"
                 variant="secondary"
-                className="border-red-200 text-red-700 hover:bg-red-50"
+                className="border-error/30 text-error hover:bg-error/10"
                 onClick={handleReject}
                 disabled={actionLoadingId === rejectingId}
               >

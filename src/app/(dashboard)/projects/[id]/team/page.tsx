@@ -424,7 +424,7 @@ export default function ProjectTeamPage() {
       <ProjectTabs projectId={projectId} />
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
           {error}
         </div>
       )}
@@ -447,7 +447,7 @@ export default function ProjectTeamPage() {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-border text-sm">
-            <thead className="bg-slate-50">
+            <thead className="bg-surface-secondary">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wide text-textSecondary">
                   Member
@@ -463,7 +463,7 @@ export default function ProjectTeamPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border bg-white">
+            <tbody className="divide-y divide-border bg-surface">
               {members.length === 0 ? (
                 <tr>
                   <td
@@ -482,7 +482,7 @@ export default function ProjectTeamPage() {
                     <tr key={member.uid}>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-secondary text-xs font-semibold text-textSecondary">
                             {getInitials(user?.name, user?.email)}
                           </div>
                           <div>
@@ -518,7 +518,7 @@ export default function ProjectTeamPage() {
                               type="button"
                               onClick={() => void handleRemove(member.uid)}
                               disabled={removingUserId === member.uid}
-                              className="rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-70"
+                              className="rounded-md border border-error/30 bg-error/10 px-3 py-1.5 text-xs font-medium text-error hover:bg-error/20 disabled:cursor-not-allowed disabled:opacity-70"
                             >
                               {removingUserId === member.uid
                                 ? "Removing..."
@@ -538,7 +538,7 @@ export default function ProjectTeamPage() {
 
       {assignOpen && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-2xl bg-white shadow-lg">
+          <div className="w-full max-w-md rounded-2xl bg-surface shadow-lg">
             <div className="border-b border-border px-4 py-3">
               <h2 className="text-sm font-semibold text-textPrimary">
                 Assign Member
@@ -557,7 +557,7 @@ export default function ProjectTeamPage() {
                 <select
                   value={selectedUserId}
                   onChange={(e) => setSelectedUserId(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                 >
                   <option value="">Select a user</option>
                   {availableUsers.map((u) => (
@@ -588,7 +588,7 @@ export default function ProjectTeamPage() {
               )}
 
               {error && (
-                <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
                   {error}
                 </div>
               )}

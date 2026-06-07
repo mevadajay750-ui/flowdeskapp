@@ -23,7 +23,7 @@ function getStatusStyles(status: ProjectStatus) {
       return "border-amber-200 bg-amber-50 text-amber-700";
     case "archived":
     default:
-      return "border-slate-200 bg-slate-50 text-slate-600";
+      return "border-border bg-surface-secondary text-textSecondary";
   }
 }
 
@@ -162,7 +162,7 @@ export default function ProjectDetailsPage() {
       <ProjectTabs projectId={projectId} />
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
           {error}
         </div>
       )}
@@ -239,7 +239,7 @@ export default function ProjectDetailsPage() {
                       size="sm"
                       onClick={handleArchive}
                       disabled={archiving}
-                      className="w-full justify-center border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                      className="w-full justify-center border border-error/30 bg-error/10 text-error hover:bg-error/20"
                       variant="secondary"
                     >
                       {archiving ? "Archiving..." : "Archive"}
@@ -270,7 +270,7 @@ export default function ProjectDetailsPage() {
                     project.techStack.map((tech) => (
                       <span
                         key={tech}
-                        className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-textSecondary"
+                        className="inline-flex items-center rounded-full bg-surface-secondary px-2.5 py-1 text-[11px] font-medium text-textSecondary"
                       >
                         {tech}
                       </span>

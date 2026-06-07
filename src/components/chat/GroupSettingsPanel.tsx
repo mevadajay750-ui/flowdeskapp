@@ -182,7 +182,7 @@ export function GroupSettingsPanel({
         onClick={onClose}
         aria-hidden
       />
-      <div className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col bg-white shadow-xl">
+      <div className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col bg-surface shadow-xl">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h2 className="text-sm font-semibold text-textPrimary">
             Group Info
@@ -190,7 +190,7 @@ export function GroupSettingsPanel({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1 text-textSecondary hover:bg-slate-100"
+            className="rounded-full p-1 text-textSecondary hover:bg-surface-secondary"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -203,7 +203,7 @@ export function GroupSettingsPanel({
               <img
                 src={chatRoom.avatarUrl}
                 alt=""
-                className="h-20 w-20 rounded-full border border-slate-200 object-cover"
+                className="h-20 w-20 rounded-full border border-border object-cover"
               />
             ) : (
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-xl font-semibold text-primary">
@@ -223,7 +223,7 @@ export function GroupSettingsPanel({
                   className="mt-1 w-full text-sm"
                 />
                 {fileError && (
-                  <p className="mt-1 text-xs text-red-600">{fileError}</p>
+                  <p className="mt-1 text-xs text-error">{fileError}</p>
                 )}
               </div>
             )}
@@ -343,7 +343,7 @@ export function GroupSettingsPanel({
                 return (
                   <li
                     key={member.uid}
-                    className="flex items-center justify-between gap-2 rounded-xl border border-slate-100 px-3 py-2"
+                    className="flex items-center justify-between gap-2 rounded-xl border border-border px-3 py-2"
                   >
                     <div className="flex min-w-0 items-center gap-2">
                       {member.photoURL ? (
@@ -353,7 +353,7 @@ export function GroupSettingsPanel({
                           className="h-8 w-8 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-textSecondary">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-secondary text-xs font-medium text-textSecondary">
                           {groupInitials(member.name)}
                         </div>
                       )}
@@ -378,7 +378,7 @@ export function GroupSettingsPanel({
                         size="sm"
                         onClick={() => void handleRemoveMember(member.uid)}
                         disabled={removingUid === member.uid}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-error hover:text-error"
                       >
                         {removingUid === member.uid ? "..." : "Remove"}
                       </Button>
@@ -390,7 +390,7 @@ export function GroupSettingsPanel({
           </div>
 
           {error && (
-            <div className="mt-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <div className="mt-4 rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
               {error}
             </div>
           )}

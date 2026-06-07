@@ -34,7 +34,7 @@ export default function SettingsLayout({
       </div>
 
       <div className="grid gap-6 md:grid-cols-[220px,1fr]">
-        <aside className="rounded-2xl border border-border bg-white p-3 shadow-sm">
+        <aside className="rounded-2xl border border-border bg-surface p-3 shadow-sm">
           <nav className="space-y-1">
             {settingsNav.map((item) => {
               const active =
@@ -48,7 +48,7 @@ export default function SettingsLayout({
                     "flex flex-col rounded-xl px-3 py-2 text-sm transition",
                     active
                       ? "bg-primary/5 text-primary"
-                      : "text-textSecondary hover:bg-slate-50 hover:text-textPrimary",
+                      : "text-textSecondary hover:bg-surface-secondary hover:text-textPrimary",
                   ].join(" ")}
                 >
                   <span className="font-medium">{item.label}</span>

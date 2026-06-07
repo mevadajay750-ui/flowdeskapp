@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import { ThemeProvider } from "@/theme/ThemeProvider";
+import { THEME_INIT_SCRIPT } from "@/theme/theme-init";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -19,11 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
+      </head>
       <body className={`${inter.variable} bg-background text-textPrimary`}>
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
 }
-

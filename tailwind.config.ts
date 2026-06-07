@@ -6,26 +6,16 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/hooks/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: ["selector", '[data-theme="dark"]'],
   theme: {
     extend: {
-      colors: {
-        primary: "#2563EB",
-        primaryDark: "#1E40AF",
-        accent: "#14B8A6",
-        background: "#F8FAFC",
-        textPrimary: "#0F172A",
-        textSecondary: "#64748B",
-        border: "#E2E8F0",
-      },
       backgroundImage: {
         "flowdesk-gradient":
           "linear-gradient(135deg, #2563EB 0%, #14B8A6 100%)",
       },
     },
   },
-  darkMode: "class",
   plugins: [],
 };
 
 export default config;
-

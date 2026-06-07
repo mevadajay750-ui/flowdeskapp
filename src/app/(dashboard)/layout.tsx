@@ -26,7 +26,7 @@ export default function DashboardSegmentLayout({
   if (!initialized || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-textSecondary">
-        <div className="rounded-2xl border border-border bg-white px-6 py-4 shadow-sm">
+        <div className="rounded-2xl border border-border bg-surface px-6 py-4 shadow-sm">
           <p className="text-sm">Preparing your workspace...</p>
         </div>
       </div>

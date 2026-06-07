@@ -18,7 +18,7 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-white/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(15,23,42,0.06)] backdrop-blur-md md:hidden dark:bg-slate-900/90"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface/90 pb-[env(safe-area-inset-bottom)] shadow-[var(--color-shadow)] backdrop-blur-md md:hidden"
     >
       <div className="flex h-16 items-stretch justify-around px-1">
         {dashboardNavItems.map((item) => {
@@ -30,7 +30,7 @@ export function MobileTabBar() {
             <Link
               href={item.href}
               className={[
-                "flex min-w-0 flex-col items-center justify-center gap-0.5 px-1 py-2 transition-colors duration-200",
+                "flex min-w-0 flex-col items-center justify-center gap-0.5 px-1 py-2 transition-colors duration-200 motion-reduce:transition-none",
                 isActive
                   ? "text-primary"
                   : "text-textSecondary active:text-textPrimary",

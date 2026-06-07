@@ -131,7 +131,7 @@ export default function DmChatPage() {
       <div className="flex items-start gap-3">
         <Link
           href="/chat/dms"
-          className="mt-1 rounded-full p-1.5 text-textSecondary transition hover:bg-slate-100"
+          className="mt-1 rounded-full p-1.5 text-textSecondary transition hover:bg-surface-secondary"
           aria-label="Back to direct messages"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -141,7 +141,7 @@ export default function DmChatPage() {
             <img
               src={peer.photoURL}
               alt=""
-              className="h-10 w-10 shrink-0 rounded-full border border-slate-200 object-cover"
+              className="h-10 w-10 shrink-0 rounded-full border border-border object-cover"
             />
           ) : (
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
@@ -162,7 +162,7 @@ export default function DmChatPage() {
                 className="inline-flex items-center gap-1 text-xs text-textSecondary"
                 aria-hidden
               >
-                <span className="h-2 w-2 rounded-full bg-slate-300" />
+                <span className="h-2 w-2 rounded-full bg-surface-secondary" />
                 Offline
               </span>
             </div>

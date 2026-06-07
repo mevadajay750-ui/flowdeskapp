@@ -140,7 +140,7 @@ export default function AccountSettingsPage() {
         </div>
 
         {error && (
-          <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          <div className="mt-3 rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
             {error}
           </div>
         )}

@@ -141,7 +141,7 @@ export default function EditTimesheetPage() {
   if (error && !timesheet) {
     return (
       <Card className="rounded-2xl shadow-sm">
-        <div className="px-4 py-6 text-sm text-red-700">{error}</div>
+        <div className="px-4 py-6 text-sm text-error">{error}</div>
       </Card>
     );
   }
@@ -183,7 +183,7 @@ export default function EditTimesheetPage() {
                 type="text"
                 value={timesheet.projectName}
                 disabled
-                className="w-full rounded-xl border border-border bg-slate-50 px-3 py-2 text-sm text-textSecondary"
+                className="w-full rounded-xl border border-border bg-surface-secondary px-3 py-2 text-sm text-textSecondary"
               />
             </div>
 
@@ -199,7 +199,7 @@ export default function EditTimesheetPage() {
                     : ""
                 }
                 disabled
-                className="w-full rounded-xl border border-border bg-slate-50 px-3 py-2 text-sm text-textSecondary"
+                className="w-full rounded-xl border border-border bg-surface-secondary px-3 py-2 text-sm text-textSecondary"
               />
             </div>
           </div>
@@ -219,7 +219,7 @@ export default function EditTimesheetPage() {
                 {...register("hours", { valueAsNumber: true })}
               />
               {errors.hours && (
-                <p className="text-xs text-red-600">{errors.hours.message}</p>
+                <p className="text-xs text-error">{errors.hours.message}</p>
               )}
             </div>
 
@@ -231,7 +231,7 @@ export default function EditTimesheetPage() {
                 type="text"
                 value={timesheet.status}
                 disabled
-                className="w-full rounded-xl border border-border bg-slate-50 px-3 py-2 text-sm text-textSecondary"
+                className="w-full rounded-xl border border-border bg-surface-secondary px-3 py-2 text-sm text-textSecondary"
               />
             </div>
           </div>
@@ -247,14 +247,14 @@ export default function EditTimesheetPage() {
               {...register("taskDescription")}
             />
             {errors.taskDescription && (
-              <p className="text-xs text-red-600">
+              <p className="text-xs text-error">
                 {errors.taskDescription.message}
               </p>
             )}
           </div>
 
           {error && (
-            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
               {error}
             </div>
           )}

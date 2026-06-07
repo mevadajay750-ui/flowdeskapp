@@ -160,7 +160,7 @@ export default function CreateTimesheetPage() {
               Project
             </label>
             <select
-              className="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               disabled={loadingProjects || projects.length === 0}
               {...register("projectId")}
             >
@@ -178,7 +178,7 @@ export default function CreateTimesheetPage() {
               ))}
             </select>
             {errors.projectId && (
-              <p className="text-xs text-red-600">
+              <p className="text-xs text-error">
                 {errors.projectId.message}
               </p>
             )}
@@ -195,7 +195,7 @@ export default function CreateTimesheetPage() {
                 {...register("date")}
               />
               {errors.date && (
-                <p className="text-xs text-red-600">{errors.date.message}</p>
+                <p className="text-xs text-error">{errors.date.message}</p>
               )}
             </div>
 
@@ -216,7 +216,7 @@ export default function CreateTimesheetPage() {
                 24).
               </p>
               {errors.hours && (
-                <p className="text-xs text-red-600">{errors.hours.message}</p>
+                <p className="text-xs text-error">{errors.hours.message}</p>
               )}
             </div>
           </div>
@@ -232,14 +232,14 @@ export default function CreateTimesheetPage() {
               {...register("taskDescription")}
             />
             {errors.taskDescription && (
-              <p className="text-xs text-red-600">
+              <p className="text-xs text-error">
                 {errors.taskDescription.message}
               </p>
             )}
           </div>
 
           {error && (
-            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
               {error}
             </div>
           )}

@@ -59,7 +59,7 @@ export function ProjectTabs({ projectId }: ProjectTabsProps) {
               "inline-flex items-center border-b-2 px-2.5 py-2 text-sm font-medium transition",
               isActive(tab.path, tab.key)
                 ? "border-primary text-primary"
-                : "border-transparent text-textSecondary hover:border-slate-300 hover:text-textPrimary",
+                : "border-transparent text-textSecondary hover:border-border hover:text-textPrimary",
             ].join(" ")}
           >
             {tab.label}

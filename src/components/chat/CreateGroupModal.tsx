@@ -132,7 +132,7 @@ export function CreateGroupModal({
 
   return (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 px-4">
-      <div className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-lg">
+      <div className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-surface shadow-lg">
         <div className="border-b border-border px-4 py-3">
           <h2 className="text-sm font-semibold text-textPrimary">
             Create Group
@@ -183,7 +183,7 @@ export function CreateGroupModal({
               Image only, up to 3MB.
             </p>
             {fileError && (
-              <p className="text-xs text-red-600">{fileError}</p>
+              <p className="text-xs text-error">{fileError}</p>
             )}
           </div>
 
@@ -207,7 +207,7 @@ export function CreateGroupModal({
                 selectableUsers.map((u) => (
                   <label
                     key={u.uid}
-                    className="flex cursor-pointer items-center gap-2 border-b border-slate-100 px-3 py-2 last:border-b-0 hover:bg-slate-50"
+                    className="flex cursor-pointer items-center gap-2 border-b border-border px-3 py-2 last:border-b-0 hover:bg-surface-secondary"
                   >
                     <input
                       type="checkbox"
@@ -228,7 +228,7 @@ export function CreateGroupModal({
           </div>
 
           {error && (
-            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
               {error}
             </div>
           )}

@@ -608,21 +608,21 @@ export function ChatRoom({
   return (
     <div className="space-y-4">
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
           {error}
         </div>
       )}
 
       <Card className="flex h-[calc(100dvh-14rem)] min-h-[320px] flex-col rounded-2xl shadow-sm md:h-[560px]">
         {!hideHeader && (
-        <div className="flex items-center justify-between border-b border-border bg-white/80 px-4 py-3">
+        <div className="flex items-center justify-between border-b border-border bg-surface/80 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
             {roomType === "group" &&
               (activeRoom?.avatarUrl ? (
                 <img
                   src={activeRoom.avatarUrl}
                   alt=""
-                  className="h-9 w-9 shrink-0 rounded-full border border-slate-200 object-cover"
+                  className="h-9 w-9 shrink-0 rounded-full border border-border object-cover"
                 />
               ) : (
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
@@ -634,7 +634,7 @@ export function ChatRoom({
                 <img
                   src={directPeer.photoURL}
                   alt=""
-                  className="h-9 w-9 shrink-0 rounded-full border border-slate-200 object-cover"
+                  className="h-9 w-9 shrink-0 rounded-full border border-border object-cover"
                 />
               ) : (
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
@@ -654,7 +654,7 @@ export function ChatRoom({
             <button
               type="button"
               onClick={onOpenSettings}
-              className="rounded-full border border-border p-2 text-textSecondary transition hover:bg-slate-50 hover:text-textPrimary"
+              className="rounded-full border border-border p-2 text-textSecondary transition hover:bg-surface-secondary hover:text-textPrimary"
               aria-label="Group settings"
             >
               <Info className="h-4 w-4" />
@@ -663,7 +663,7 @@ export function ChatRoom({
         </div>
         )}
 
-        <div className="flex-1 overflow-y-auto bg-slate-50/80 px-4 py-4">
+        <div className="flex-1 overflow-y-auto bg-surface-secondary/80 px-4 py-4">
           {loadingMessages ? (
             <p className="text-sm text-textSecondary">Loading messages...</p>
           ) : messages.length === 0 ? (
@@ -678,7 +678,7 @@ export function ChatRoom({
                     type="button"
                     onClick={() => void handleLoadOlderMessages()}
                     disabled={loadingOlder}
-                    className="rounded-full border border-border bg-white px-3 py-1 text-xs font-medium text-textSecondary shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-textSecondary shadow-sm hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {loadingOlder
                       ? "Loading earlier messages..."
@@ -692,7 +692,7 @@ export function ChatRoom({
                 const alignmentClass = isOwn ? "justify-end" : "justify-start";
                 let bubbleClass = isOwn
                   ? "bg-primary text-white rounded-2xl rounded-br-sm shadow-xs"
-                  : "bg-white text-textPrimary rounded-2xl rounded-bl-sm shadow-xs border border-slate-200/80";
+                  : "bg-surface text-textPrimary rounded-2xl rounded-bl-sm shadow-xs border border-border/80";
 
                 if (messageType === "code") {
                   bubbleClass =
@@ -736,7 +736,7 @@ export function ChatRoom({
                           </a>
                         ) : messageType === "file" && message.fileUrl ? (
                           <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200/80 text-slate-700">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200/80 text-textPrimary">
                               <FileText className="h-4 w-4" />
                             </div>
                             <div className="space-y-0.5">
@@ -744,7 +744,7 @@ export function ChatRoom({
                                 {message.fileName ?? "Attachment"}
                               </div>
                               {message.fileSize && (
-                                <div className="text-[11px] text-slate-300">
+                                <div className="text-[11px] text-textSecondary">
                                   {formatFileSize(message.fileSize)}
                                 </div>
                               )}
@@ -762,7 +762,7 @@ export function ChatRoom({
                         ) : messageType === "code" ? (
                           <div className="flex max-w-[480px] flex-col gap-2">
                             <div className="flex items-center justify-between gap-3">
-                              <div className="text-[11px] uppercase tracking-wide text-slate-400">
+                              <div className="text-[11px] uppercase tracking-wide text-textSecondary">
                                 Code snippet
                               </div>
                               <button
@@ -798,7 +798,7 @@ export function ChatRoom({
           <div ref={scrollAnchorRef} />
         </div>
 
-        <div className="shrink-0 border-t border-border bg-white px-3 py-2.5 md:px-4 md:py-3">
+        <div className="shrink-0 border-t border-border bg-surface px-3 py-2.5 md:px-4 md:py-3">
           <form
             className="flex flex-col gap-2"
             onSubmit={(event) => {
@@ -823,7 +823,7 @@ export function ChatRoom({
                 }
               }}
               placeholder="Type a message..."
-              className="min-h-[44px] max-h-32 w-full resize-none rounded-xl border border-border bg-slate-50 px-3 py-2 text-sm text-textPrimary outline-none focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-70"
+              className="min-h-[44px] max-h-32 w-full resize-none rounded-xl border border-border bg-surface-secondary px-3 py-2 text-sm text-textPrimary outline-none focus:border-primary focus:bg-surface focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-70"
             />
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1">
@@ -831,7 +831,7 @@ export function ChatRoom({
                   type="button"
                   onClick={() => imageInputRef.current?.click()}
                   disabled={sending || uploading || accessDenied}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-textSecondary hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <ImageIcon className="h-4 w-4" />
                   <span className="sr-only">Upload image</span>
@@ -840,7 +840,7 @@ export function ChatRoom({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={sending || uploading || accessDenied}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-textSecondary hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Paperclip className="h-4 w-4" />
                   <span className="sr-only">Upload file</span>
@@ -849,7 +849,7 @@ export function ChatRoom({
                   type="button"
                   onClick={() => setCodeModalOpen(true)}
                   disabled={sending || uploading || accessDenied}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-textSecondary hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-textSecondary hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Code2 className="h-4 w-4" />
                   <span className="sr-only">Send code snippet</span>
@@ -886,7 +886,7 @@ export function ChatRoom({
 
       {codeModalOpen && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-lg">
+          <div className="w-full max-w-lg rounded-2xl bg-surface shadow-lg">
             <div className="border-b border-border px-4 py-3">
               <h2 className="text-sm font-semibold text-textPrimary">
                 Code snippet

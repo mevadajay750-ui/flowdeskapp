@@ -122,7 +122,7 @@ export default function GroupChatPage() {
       <div className="flex items-start gap-3">
         <Link
           href="/chat/groups"
-          className="mt-1 rounded-full p-1.5 text-textSecondary transition hover:bg-slate-100"
+          className="mt-1 rounded-full p-1.5 text-textSecondary transition hover:bg-surface-secondary"
           aria-label="Back to groups"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -132,7 +132,7 @@ export default function GroupChatPage() {
             <img
               src={chatRoom.avatarUrl}
               alt=""
-              className="h-10 w-10 shrink-0 rounded-full border border-slate-200 object-cover"
+              className="h-10 w-10 shrink-0 rounded-full border border-border object-cover"
             />
           ) : (
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
@@ -152,7 +152,7 @@ export default function GroupChatPage() {
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
-            className="shrink-0 rounded-full border border-border p-2 text-textSecondary transition hover:bg-slate-50 hover:text-textPrimary"
+            className="shrink-0 rounded-full border border-border p-2 text-textSecondary transition hover:bg-surface-secondary hover:text-textPrimary"
             aria-label="Group settings"
           >
             <Info className="h-4 w-4" />

@@ -172,7 +172,7 @@ export default function CreateProjectPage() {
                   {...register("name")}
                 />
                 {errors.name && (
-                  <p className="text-xs text-red-600">{errors.name.message}</p>
+                  <p className="text-xs text-error">{errors.name.message}</p>
                 )}
               </div>
 
@@ -186,7 +186,7 @@ export default function CreateProjectPage() {
                   {...register("clientName")}
                 />
                 {errors.clientName && (
-                  <p className="text-xs text-red-600">
+                  <p className="text-xs text-error">
                     {errors.clientName.message}
                   </p>
                 )}
@@ -203,7 +203,7 @@ export default function CreateProjectPage() {
                 {...register("description")}
               />
               {errors.description && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-error">
                   {errors.description.message}
                 </p>
               )}
@@ -224,7 +224,7 @@ export default function CreateProjectPage() {
                 Firebase).
               </p>
               {errors.techStack && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-error">
                   {errors.techStack.message}
                 </p>
               )}
@@ -241,7 +241,7 @@ export default function CreateProjectPage() {
                   {...register("startDate")}
                 />
                 {errors.startDate && (
-                  <p className="text-xs text-red-600">
+                  <p className="text-xs text-error">
                     {errors.startDate.message}
                   </p>
                 )}
@@ -257,7 +257,7 @@ export default function CreateProjectPage() {
                   {...register("endDate")}
                 />
                 {errors.endDate && (
-                  <p className="text-xs text-red-600">
+                  <p className="text-xs text-error">
                     {errors.endDate.message}
                   </p>
                 )}
@@ -268,7 +268,7 @@ export default function CreateProjectPage() {
                   Status
                 </label>
                 <select
-                  className="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                   {...register("status")}
                 >
                   <option value="active">Active</option>
@@ -277,7 +277,7 @@ export default function CreateProjectPage() {
                   <option value="archived">Archived</option>
                 </select>
                 {errors.status && (
-                  <p className="text-xs text-red-600">
+                  <p className="text-xs text-error">
                     {errors.status as unknown as string}
                   </p>
                 )}
@@ -285,7 +285,7 @@ export default function CreateProjectPage() {
             </div>
 
             {error && (
-              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+              <div className="rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error">
                 {error}
               </div>
             )}
