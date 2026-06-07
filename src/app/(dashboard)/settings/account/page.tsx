@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 
 import { auth } from "@/app/firebase";
+import { Alert } from "@/components/ui/Alert";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -146,9 +147,7 @@ export default function AccountSettingsPage() {
         )}
 
         {success && (
-          <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
-            {success}
-          </div>
+          <Alert variant="success">{success}</Alert>
         )}
       </Card>
     </div>

@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { db } from "@/app/firebase";
+import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { Timesheet } from "@/types";
@@ -168,10 +169,10 @@ export default function EditTimesheetPage() {
       <Card className="rounded-2xl shadow-sm">
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
           {!isPending && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            <Alert variant="warning">
               This timesheet has been {timesheet.status}. Only pending
               timesheets can be edited.
-            </div>
+            </Alert>
           )}
 
           <div className="grid gap-4 md:grid-cols-2">
