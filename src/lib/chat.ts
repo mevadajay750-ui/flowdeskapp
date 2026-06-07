@@ -24,11 +24,49 @@ import type {
   ProjectMember,
 } from "@/types";
 
+export function normalizeProjectMembers(
+  rawMembers: unknown,
+  fallbackAssignedAt?: ProjectMember["assignedAt"]
+): ProjectMember[] {
+  if (!Array.isArray(rawMembers)) return [];
+
+  const normalized: ProjectMember[] = [];
+
+  for (const entry of rawMembers) {
+    if (typeof entry === "string" && entry.trim()) {
+      normalized.push({
+        uid: entry,
+        projectRole: "Member",
+        assignedAt: fallbackAssignedAt ?? null,
+      });
+      continue;
+    }
+
+    if (
+      entry &&
+      typeof entry === "object" &&
+      typeof (entry as ProjectMember).uid === "string" &&
+      (entry as ProjectMember).uid.length > 0
+    ) {
+      const member = entry as ProjectMember;
+      normalized.push({
+        uid: member.uid,
+        projectRole: member.projectRole || "Member",
+        assignedAt: member.assignedAt ?? fallbackAssignedAt ?? null,
+      });
+    }
+  }
+
+  return normalized;
+}
+
 export function projectMembersToParticipants(
   members: ProjectMember[],
   usersById: Map<string, Pick<AppUser, "name" | "email" | "photoURL">>
 ): ChatRoomParticipant[] {
-  return members.map((member) => {
+  return members
+    .filter((member) => typeof member.uid === "string" && member.uid.length > 0)
+    .map((member) => {
     const profile = usersById.get(member.uid);
     const participant: ChatRoomParticipant = {
       uid: member.uid,
@@ -132,7 +170,8 @@ export async function createProjectChatRoom(
   creator: Pick<AppUser, "uid" | "name" | "email" | "photoURL">
 ): Promise<string> {
   const usersById = await fetchUsersByIds(
-    project.memberIds ?? project.members.map((m) => m.uid)
+    project.memberIds ??
+      normalizeProjectMembers(project.members).map((m) => m.uid)
   );
   usersById.set(creator.uid, {
     name: creator.name,
@@ -141,7 +180,7 @@ export async function createProjectChatRoom(
   });
 
   const participants = projectMembersToParticipants(
-    project.members,
+    normalizeProjectMembers(project.members),
     usersById
   );
   const participantIds = participantIdsFromParticipants(participants);
@@ -181,8 +220,17 @@ export async function syncProjectChatRoomParticipants(
     chatRoomId = ensuredId;
   }
 
-  const usersById = await fetchUsersByIds(members.map((m) => m.uid));
-  const participants = projectMembersToParticipants(members, usersById);
+  const normalizedMembers = normalizeProjectMembers(
+    members,
+    project.createdAt
+  );
+  const usersById = await fetchUsersByIds(
+    normalizedMembers.map((m) => m.uid)
+  );
+  const participants = projectMembersToParticipants(
+    normalizedMembers,
+    usersById
+  );
   const participantIds = participantIdsFromParticipants(participants);
 
   await updateDoc(doc(db, "chatRooms", chatRoomId), {
@@ -200,9 +248,11 @@ export async function ensureProjectChatRoom(projectId: string): Promise<string |
   const data = projectSnap.data() as Omit<Project, "id">;
   if (data.chatRoomId) return data.chatRoomId;
 
-  const members = (data.members || []) as ProjectMember[];
+  const members = normalizeProjectMembers(data.members, data.createdAt);
   const memberIds =
-    data.memberIds ?? members.map((m) => m.uid);
+    Array.isArray(data.memberIds) && data.memberIds.length > 0
+      ? data.memberIds
+      : members.map((m) => m.uid);
 
   const usersById = await fetchUsersByIds(memberIds);
   const participants = projectMembersToParticipants(members, usersById);

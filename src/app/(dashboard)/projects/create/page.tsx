@@ -73,7 +73,7 @@ export default function CreateProjectPage() {
       const creatorMember = {
         uid: user.uid,
         projectRole: "Owner",
-        assignedAt: serverTimestamp(),
+        assignedAt: new Date(),
       };
 
       const projectRef = doc(collection(db, "projects"));
