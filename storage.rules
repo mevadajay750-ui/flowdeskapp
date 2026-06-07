@@ -65,6 +65,10 @@ service firebase.storage {
       allow read: if isAdmin() || isChatRoomParticipantFor(chatRoomId);
     }
 
+    match /projects/{projectId}/files/{itemId}/{fileName} {
+      allow read, write: if isAdmin() || isProjectMemberFor(projectId);
+    }
+
     // Deny everything else by default
     match /{allPaths=**} {
       allow read, write: if false;
