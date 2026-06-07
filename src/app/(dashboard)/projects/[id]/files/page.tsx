@@ -8,6 +8,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { FileExplorer } from "@/components/projects/files/FileExplorer";
 import { ProjectTabs } from "@/components/projects/ProjectTabs";
+import { Alert } from "@/components/ui/Alert";
 import { Card } from "@/components/ui/Card";
 import { listProjectFileItems } from "@/lib/projectFiles";
 import { hasPermission } from "@/lib/rbac";
@@ -108,11 +109,7 @@ export default function ProjectFilesPage() {
 
       <ProjectTabs projectId={projectId} />
 
-      {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
-          {error}
-        </div>
-      )}
+      {error && <Alert>{error}</Alert>}
 
       {fetching ? (
         <Card className="rounded-2xl shadow-sm">

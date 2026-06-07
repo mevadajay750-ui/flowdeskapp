@@ -8,6 +8,7 @@ import { FileBreadcrumbs } from "@/components/projects/files/FileBreadcrumbs";
 import { FileItemRow } from "@/components/projects/files/FileItemRow";
 import { FolderTree } from "@/components/projects/files/FolderTree";
 import { UploadFileModal } from "@/components/projects/files/UploadFileModal";
+import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -125,16 +126,12 @@ export function FileExplorer({
   return (
     <>
       {readOnly && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+        <Alert variant="warning">
           This project is archived — files are read-only.
-        </div>
+        </Alert>
       )}
 
-      {actionError && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
-          {actionError}
-        </div>
-      )}
+      {actionError && <Alert>{actionError}</Alert>}
 
       <div className="flex flex-col gap-4 lg:flex-row">
         <Card className="w-full shrink-0 rounded-2xl p-3 shadow-sm lg:w-60">
@@ -169,7 +166,7 @@ export function FileExplorer({
                       aria-label="Close menu"
                       onClick={() => setMenuOpen(false)}
                     />
-                    <div className="absolute right-0 z-20 mt-1 w-44 rounded-xl border border-border bg-white py-1 shadow-lg">
+                    <div className="absolute right-0 z-20 mt-1 w-44 rounded-xl border border-border bg-surface py-1 shadow-lg">
                       <button
                         type="button"
                         className="block w-full px-3 py-2 text-left text-sm text-textPrimary hover:bg-surface-secondary"

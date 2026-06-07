@@ -24,12 +24,12 @@ import { useAuthStore } from "@/store/useAuthStore";
 function getStatusStyles(status: TimesheetStatus) {
   switch (status) {
     case "approved":
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+      return "border-success/30 bg-success/10 text-success";
     case "rejected":
       return "border-error/30 bg-error/10 text-error";
     case "pending":
     default:
-      return "border-amber-200 bg-amber-50 text-amber-700";
+      return "border-warning/30 bg-warning/10 text-warning";
   }
 }
 

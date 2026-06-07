@@ -16,10 +16,10 @@ interface FileItemRowProps {
 
 function ItemIcon({ type }: { type: ProjectFileItem["type"] }) {
   if (type === "folder") {
-    return <Folder className="h-4 w-4 text-amber-500" />;
+    return <Folder className="h-4 w-4 text-warning" />;
   }
   if (type === "page") {
-    return <FileText className="h-4 w-4 text-sky-500" />;
+    return <FileText className="h-4 w-4 text-primary" />;
   }
   return <Paperclip className="h-4 w-4 text-textSecondary" />;
 }
@@ -53,7 +53,7 @@ export function FileItemRow({
           type="button"
           onClick={() => onDelete(item)}
           disabled={deleting}
-          className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-error hover:bg-error/10 disabled:opacity-50"
         >
           {deleting ? "Deleting..." : "Delete"}
         </button>

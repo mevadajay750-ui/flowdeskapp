@@ -16,11 +16,11 @@ import { useAuthStore } from "@/store/useAuthStore";
 function getStatusStyles(status: ProjectStatus) {
   switch (status) {
     case "active":
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+      return "border-success/30 bg-success/10 text-success";
     case "completed":
-      return "border-sky-200 bg-sky-50 text-sky-700";
+      return "border-primary/30 bg-primary/10 text-primary";
     case "on_hold":
-      return "border-amber-200 bg-amber-50 text-amber-700";
+      return "border-warning/30 bg-warning/10 text-warning";
     case "archived":
     default:
       return "border-border bg-surface-secondary text-textSecondary";

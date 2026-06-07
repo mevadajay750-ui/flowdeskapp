@@ -496,11 +496,11 @@ export default function ProjectTeamPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-medium text-indigo-700">
+                        <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary">
                           {member.projectRole || "Member"}
                         </span>
                         {isCreator && (
-                          <span className="ml-2 inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                          <span className="ml-2 inline-flex items-center rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-medium text-warning">
                             Owner
                           </span>
                         )}
